@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <title>顺盈汽贸 - 二手挂车交易平台</title>
+<meta name="description" content="顺盈汽贸 - 专注二手挂车交易，优质车源，价格透明，支持现场看车。可选中文、English、العربية、فارسی、Türkçe、کوردی、اردو">
+<meta property="og:title" content="顺盈汽贸 - 二手挂车交易平台">
+<meta property="og:description" content="专注二手挂车交易多年，优质车源，价格透明，手续齐全">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://x20260519867-netizen.github.io/shunying-trailer/">
+<meta property="og:image" content="https://x20260519867-netizen.github.io/shunying-trailer/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -93,7 +100,13 @@ body.rtl .lang-option{text-align:right}
 
 /* Trailer Card */
 .trailer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:24px}
-.trailer-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06);transition:transform .3s,box-shadow .3s;cursor:pointer;position:relative}
+.trailer-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06);transition:transform .3s,box-shadow .3s,opacity .4s;cursor:pointer;position:relative;opacity:0;animation:cardIn .45s ease forwards}
+.trailer-card:nth-child(2){animation-delay:.08s}
+.trailer-card:nth-child(3){animation-delay:.16s}
+.trailer-card:nth-child(4){animation-delay:.24s}
+.trailer-card:nth-child(5){animation-delay:.32s}
+.trailer-card:nth-child(6){animation-delay:.4s}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .trailer-card:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(0,0,0,.12)}
 .trailer-img{height:220px;background:#e8ecf1;position:relative;overflow:hidden}
 .trailer-img img{width:100%;height:100%;object-fit:cover}
@@ -154,7 +167,8 @@ body.rtl .admin-badge-actions{right:auto;left:12px}
 /* ===== Vehicle Detail Modal ===== */
 .detail-modal .modal-box{max-width:800px;text-align:left;padding:0;overflow-y:auto;border-radius:16px;max-height:95vh}
 .detail-carousel{position:relative;width:100%;background:#1a1a2e;min-height:300px;display:flex;align-items:center;justify-content:center}
-.detail-carousel .main-img{width:100%;max-height:450px;object-fit:contain;display:block}
+.detail-carousel .main-img{width:100%;max-height:450px;object-fit:contain;display:block;animation:imgFade .3s ease}
+@keyframes imgFade{from{opacity:.4;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
 .detail-carousel .no-img{color:rgba(255,255,255,.3);font-size:80px;text-align:center;padding:60px 0}
 .carousel-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.5);color:#fff;border:none;width:44px;height:44px;border-radius:50%;font-size:22px;cursor:pointer;transition:background .3s;display:flex;align-items:center;justify-content:center;z-index:2}
 .carousel-btn:hover{background:rgba(0,0,0,.8)}
@@ -182,9 +196,10 @@ body.rtl .carousel-next{right:auto;left:16px}
 body.rtl .detail-close{right:auto;left:12px}
 
 /* Modal common */
-.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:20px}
-.modal-overlay.active{display:flex}
-.modal-box{background:#fff;border-radius:16px;padding:40px;text-align:center;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:90vh;overflow-y:auto}
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:20px;opacity:0;transition:opacity .3s}
+.modal-overlay.active{display:flex;opacity:1}
+.modal-box{background:#fff;border-radius:16px;padding:40px;text-align:center;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:90vh;overflow-y:auto;transform:scale(.95) translateY(10px);transition:transform .3s ease}
+.modal-overlay.active .modal-box{transform:scale(1) translateY(0)}
 body.rtl .modal-box{text-align:right}
 .modal-box h3{margin-bottom:12px;font-size:20px;color:#1a1a2e}
 .modal-box p{color:#888;font-size:14px;margin-bottom:20px}
@@ -648,8 +663,8 @@ const badgeClass=t.badgeType?'trailer-badge '+t.badgeType:'trailer-badge';
 const imgs=t.images||[];
 const cover=imgs.length>0?imgs[0]:'';
 const imgCount=imgs.length;
-return `<div class="trailer-card" onclick="openDetail(${t.id})">
-<div class="trailer-img" style="background:${bg}">${cover?`<img src="${cover}" alt="${t.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="placeholder-icon" style="display:none">${icon}</div>`:`<div class="placeholder-icon">${icon}</div>`}
+return `<div class="trailer-card" onclick="openDetail(${t.id})" style="animation-delay:${(idx%6)*0.08}s">
+<div class="trailer-img" style="background:${bg}">${cover?`<img src="${cover}" alt="${t.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="placeholder-icon" style="display:none">${icon}</div>`:`<div class="placeholder-icon">${icon}</div>`}
 ${imgCount>1?`<span class="img-count-badge">📷 ${imgCount}</span>`:''}
 <span class="${badgeClass}">${t.badge}</span></div>
 <div class="admin-badge-actions"><button class="edit-btn" onclick="event.stopPropagation();editVehicle(${t.id})">✏️</button><button class="del-btn" onclick="event.stopPropagation();deleteVehicle(${t.id})">✕</button></div>
@@ -710,12 +725,20 @@ const waUrl='https://wa.me/'+c.whatsapp.replace(/[^0-9]/g,'');
 document.getElementById('detailActions').innerHTML=`
 <button class="btn btn-primary" onclick="closeDetail();contactAbout(${v.id})">${getText('detail.inquireNow')}</button>
 <a href="tel:${c.phoneRaw}" class="btn btn-outline" style="border-color:#ddd;color:#333;background:#f5f5f5">${getText('detail.callNow')}</a>
-<a href="${waUrl}" target="_blank" class="btn btn-whatsapp">${getText('detail.whatsapp')}</a>`;
+<a href="${waUrl}" target="_blank" class="btn btn-whatsapp">${getText('detail.whatsapp')}</a>
+<button class="btn" style="background:#f0f0f0;color:#555;min-width:auto;flex:0.5" onclick="shareVehicle()" title="分享">📤</button>`;
 }
 function carouselPrev(){const v=appData.vehicles.find(x=>x.id===detailVehicleId);if(!v)return;const imgs=v.images||[];detailCurrentIdx=(detailCurrentIdx-1+imgs.length)%imgs.length;showDetailImage(v)}
 function carouselNext(){const v=appData.vehicles.find(x=>x.id===detailVehicleId);if(!v)return;const imgs=v.images||[];detailCurrentIdx=(detailCurrentIdx+1)%imgs.length;showDetailImage(v)}
 function carouselGo(i){detailCurrentIdx=i;const v=appData.vehicles.find(x=>x.id===detailVehicleId);if(v)showDetailImage(v)}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDetail();if(e.key==='ArrowLeft'&&detailVehicleId)carouselPrev();if(e.key==='ArrowRight'&&detailVehicleId)carouselNext()});
+// Touch swipe for carousel
+let touchStartX=0,touchEndX=0;
+document.addEventListener('touchstart',function(e){if(!detailVehicleId)return;const t=e.changedTouches[0];touchStartX=t.screenX},false);
+document.addEventListener('touchend',function(e){if(!detailVehicleId)return;const t=e.changedTouches[0];touchEndX=t.screenX;handleSwipe()},false);
+function handleSwipe(){const diff=touchStartX-touchEndX;if(Math.abs(diff)>60){if(diff>0)carouselNext();else carouselPrev()}}
+// Share function
+function shareVehicle(){const v=appData.vehicles.find(x=>x.id===detailVehicleId);if(!v)return;const c=appData.company;const txt=`🚛 ${v.title}\n💰 ¥${v.price}万\n📅 ${v.year}年 · 📏 ${v.mileage}\n📍 ${v.location}\n\n${c.name}\n📞 ${c.phone}`;const url=window.location.href;if(navigator.share){navigator.share({title:v.title,text:txt,url:url}).catch(()=>{})}else{navigator.clipboard.writeText(txt+'\n'+url).then(()=>showToast('✅ 已复制到剪贴板')).catch(()=>showToast('❌ 复制失败',true))}}
 
 // ===== FILTERS =====
 function applyFilters(){
