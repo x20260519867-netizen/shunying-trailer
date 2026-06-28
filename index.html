@@ -152,7 +152,7 @@ body.rtl .admin-badge-actions{right:auto;left:12px}
 .submit-btn:hover{background:#c0392b}
 
 /* ===== Vehicle Detail Modal ===== */
-.detail-modal .modal-box{max-width:800px;text-align:left;padding:0;overflow:hidden;border-radius:16px}
+.detail-modal .modal-box{max-width:800px;text-align:left;padding:0;overflow-y:auto;border-radius:16px;max-height:95vh}
 .detail-carousel{position:relative;width:100%;background:#1a1a2e;min-height:300px;display:flex;align-items:center;justify-content:center}
 .detail-carousel .main-img{width:100%;max-height:450px;object-fit:contain;display:block}
 .detail-carousel .no-img{color:rgba(255,255,255,.3);font-size:80px;text-align:center;padding:60px 0}
@@ -168,7 +168,7 @@ body.rtl .carousel-next{right:auto;left:16px}
 .detail-thumbs{display:flex;gap:6px;padding:8px 12px;background:#f5f5f5;overflow-x:auto}
 .detail-thumbs img{width:60px;height:45px;object-fit:cover;border-radius:4px;cursor:pointer;opacity:.5;transition:all .3s;flex-shrink:0;border:2px solid transparent}
 .detail-thumbs img.active{opacity:1;border-color:#e74c3c}
-.detail-info{padding:24px}
+.detail-info{padding:24px;padding-bottom:40px}
 .detail-info h2{font-size:24px;font-weight:800;margin-bottom:12px}
 .detail-meta{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px}
 .detail-meta span{font-size:14px;color:#888;display:flex;align-items:center;gap:4px}
@@ -283,10 +283,9 @@ body.rtl .scroll-top{right:auto;left:24px}
 .contact-btns .btn{width:100%;text-align:center;justify-content:center}
 .lang-dropdown{right:auto;left:0}
 body.rtl .lang-dropdown{left:auto;right:0}
-.detail-modal .modal-box{max-width:100%;border-radius:0;min-height:100vh}
+.detail-modal .modal-box{max-width:100%;border-radius:0;min-height:100dvh;overflow-y:auto}
 .detail-carousel .main-img{max-height:300px}
-.detail-info{padding:16px}
-.detail-info h2{font-size:20px}
+.detail-info{padding:16px;padding-bottom:32px}
 .detail-price{font-size:26px}
 .detail-thumbs img{width:50px;height:38px}
 .detail-actions .btn{min-width:0;padding:10px 16px;font-size:13px}
@@ -749,7 +748,7 @@ document.getElementById('wechatModal').addEventListener('click',function(e){if(e
 function handleSubmit(e){e.preventDefault();const btn=e.target.querySelector('.submit-btn');btn.textContent='⏳ ...';btn.disabled=true;setTimeout(()=>{showToast(getText('contact.msgSent'));btn.textContent=getText('contact.formSubmit');btn.disabled=false;e.target.reset();window.scrollTo({top:0,behavior:'smooth'})},1200)}
 
 // ===== ADMIN =====
-const ADMIN_PASSWORD='admin123';
+const ADMIN_PASSWORD='gyf123456.';
 function showAdminLogin(){document.getElementById('adminLoginModal').classList.add('active');document.getElementById('adminPwdInput').value='';document.getElementById('adminLoginError').style.display='none';document.body.style.overflow='hidden';setTimeout(()=>document.getElementById('adminPwdInput').focus(),200)}
 function hideAdminLogin(){document.getElementById('adminLoginModal').classList.remove('active');document.body.style.overflow=''}
 document.getElementById('adminLoginModal').addEventListener('click',function(e){if(e.target===this)hideAdminLogin()});
