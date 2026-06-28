@@ -1,1977 +1,925 @@
 <!DOCTYPE html>
 <html lang="zh-CN" dir="ltr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>顺盈汽贸 - 二手挂车交易平台</title>
-    <style>
-        /* ===== Reset & Base ===== */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-            color: #1a1a2e;
-            background: #f5f6fa;
-            line-height: 1.6;
-        }
-        a { color: inherit; text-decoration: none; }
-        img { max-width: 100%; display: block; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>顺盈汽贸 - 二手挂车交易平台</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;color:#1a1a2e;background:#f5f6fa;line-height:1.6}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
 
-        /* ===== RTL override ===== */
-        body.rtl {
-            font-family: "Segoe UI", "Noto Naskh Arabic", "Noto Sans Arabic", "Noto Sans SC", Tahoma, sans-serif;
-            direction: rtl;
-        }
-        body.rtl .trailer-meta { flex-direction: row-reverse; }
-        body.rtl .filter-bar { flex-direction: row-reverse; }
-        body.rtl .contact-item { flex-direction: row-reverse; }
-        body.rtl .nav-links { flex-direction: row-reverse; }
-        body.rtl .admin-vehicle-item { flex-direction: row-reverse; }
-        body.rtl .hero-btns { flex-direction: row-reverse; }
-        body.rtl .hero-stats { flex-direction: row-reverse; }
-        body.rtl .contact-btns { flex-direction: row-reverse; }
-        body.rtl .admin-badge-actions { right: auto; left: 12px; }
-        body.rtl .trailer-badge { left: auto; right: 12px; }
-        body.rtl .trailer-footer { flex-direction: row-reverse; }
-        body.rtl .admin-tabs { flex-direction: row-reverse; }
-        body.rtl .form-row { direction: rtl; }
-        body.rtl .contact-form h4 { text-align: right; }
-        body.rtl .contact-info h3 { text-align: right; }
-        body.rtl .contact-info p { text-align: right; }
-        body.rtl .section-title { direction: rtl; }
-        body.rtl .admin-panel label { text-align: right; }
+body.rtl{font-family:"Segoe UI","Noto Naskh Arabic","Noto Sans Arabic",Tahoma,sans-serif;direction:rtl}
+body.rtl .trailer-meta,.rtl .filter-bar,.rtl .contact-item,.rtl .nav-links,.rtl .admin-vehicle-item,.rtl .hero-btns,.rtl .hero-stats,.rtl .contact-btns,.rtl .admin-badge-actions,.rtl .trailer-footer,.rtl .admin-tabs,.rtl .form-row{direction:rtl}
+body.rtl .admin-badge-actions{right:auto;left:12px}
+body.rtl .trailer-badge{left:auto;right:12px}
+body.rtl .trailer-footer{flex-direction:row-reverse}
+body.rtl .contact-form h4,.rtl .contact-info h3,.rtl .contact-info p,.rtl .admin-panel label,.rtl .section-title{text-align:right}
+body.rtl .img-upload-list,.rtl .carousel-dots{flex-direction:row-reverse}
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+.container{max-width:1200px;margin:0 auto;padding:0 20px}
 
-        /* ===== Header ===== */
-        header {
-            position: fixed; top: 0; left: 0; right: 0;
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.06);
-            z-index: 1000;
-        }
-        nav {
-            display: flex; align-items: center; justify-content: space-between;
-            height: 70px;
-        }
-        .logo {
-            font-size: 24px; font-weight: 800;
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            white-space: nowrap;
-        }
-        .logo span { font-weight: 300; font-size: 14px; display: block; margin-top: -4px; }
-        .nav-links { display: flex; gap: 32px; list-style: none; align-items: center; }
-        .nav-links a {
-            font-size: 15px; font-weight: 500; color: #444;
-            transition: color 0.3s; position: relative; cursor: pointer;
-        }
-        .nav-links a::after {
-            content: ''; position: absolute; bottom: -4px; left: 0;
-            width: 0; height: 2px; background: #e74c3c;
-            transition: width 0.3s;
-        }
-        body.rtl .nav-links a::after { left: auto; right: 0; }
-        .nav-links a:hover { color: #e74c3c; }
-        .nav-links a:hover::after { width: 100%; }
-        .nav-cta {
-            background: #e74c3c; color: #fff !important; padding: 8px 20px;
-            border-radius: 6px; font-weight: 600;
-        }
-        .nav-cta::after { display: none !important; }
-        .nav-cta:hover { background: #c0392b !important; }
-        .menu-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
-        .menu-toggle span { width: 26px; height: 3px; background: #333; border-radius: 2px; transition: all 0.3s; }
+/* Header */
+header{position:fixed;top:0;left:0;right:0;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);box-shadow:0 2px 20px rgba(0,0,0,0.06);z-index:1000}
+nav{display:flex;align-items:center;justify-content:space-between;height:70px}
+.logo{font-size:24px;font-weight:800;background:linear-gradient(135deg,#e74c3c,#c0392b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+.logo span{font-weight:300;font-size:14px;display:block;margin-top:-4px}
+.nav-links{display:flex;gap:32px;list-style:none;align-items:center}
+.nav-links a{font-size:15px;font-weight:500;color:#444;transition:color .3s;position:relative;cursor:pointer}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:#e74c3c;transition:width .3s}
+body.rtl .nav-links a::after{left:auto;right:0}
+.nav-links a:hover{color:#e74c3c}
+.nav-links a:hover::after{width:100%}
+.nav-cta{background:#e74c3c;color:#fff!important;padding:8px 20px;border-radius:6px;font-weight:600}
+.nav-cta::after{display:none!important}
+.nav-cta:hover{background:#c0392b!important}
+.menu-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.menu-toggle span{width:26px;height:3px;background:#333;border-radius:2px;transition:all .3s}
+.admin-entry{background:none;border:1px dashed #ccc;color:#999;font-size:12px;padding:4px 12px;border-radius:4px;cursor:pointer;transition:all .3s}
+.admin-entry:hover{border-color:#e74c3c;color:#e74c3c}
 
-        .admin-entry {
-            background: none; border: 1px dashed #ccc; color: #999; font-size: 12px;
-            padding: 4px 12px; border-radius: 4px; cursor: pointer; transition: all 0.3s;
-        }
-        .admin-entry:hover { border-color: #e74c3c; color: #e74c3c; }
+/* Lang Switcher */
+.lang-switcher{position:relative}
+.lang-current{display:flex;align-items:center;gap:4px;cursor:pointer;padding:4px 10px;border-radius:4px;font-size:13px;font-weight:500;background:#f0f0f0;border:none;transition:background .2s;color:#555}
+.lang-current:hover{background:#e0e0e0}
+.lang-dropdown{display:none;position:absolute;top:100%;right:0;margin-top:4px;background:#fff;border-radius:8px;box-shadow:0 8px 30px rgba(0,0,0,.12);min-width:160px;z-index:100;overflow:hidden}
+body.rtl .lang-dropdown{right:auto;left:0}
+.lang-dropdown.open{display:block}
+.lang-option{display:flex;align-items:center;gap:8px;padding:10px 16px;font-size:14px;cursor:pointer;transition:background .2s;border:none;background:none;width:100%;text-align:left;color:#333}
+body.rtl .lang-option{text-align:right}
+.lang-option:hover{background:#f5f5f5}
+.lang-option.active{background:rgba(231,76,60,0.08);color:#e74c3c;font-weight:600}
+.lang-option .native{font-weight:500}
+.lang-option .name{color:#999;font-size:12px}
 
-        /* ===== Language Switcher ===== */
-        .lang-switcher {
-            position: relative;
-        }
-        .lang-current {
-            display: flex; align-items: center; gap: 4px; cursor: pointer;
-            padding: 4px 10px; border-radius: 4px; font-size: 13px; font-weight: 500;
-            background: #f0f0f0; border: none; transition: background 0.2s;
-            color: #555;
-        }
-        .lang-current:hover { background: #e0e0e0; }
-        .lang-dropdown {
-            display: none; position: absolute; top: 100%; right: 0; margin-top: 4px;
-            background: #fff; border-radius: 8px; box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-            min-width: 160px; z-index: 100; overflow: hidden;
-        }
-        body.rtl .lang-dropdown { right: auto; left: 0; }
-        .lang-dropdown.open { display: block; }
-        .lang-option {
-            display: flex; align-items: center; gap: 8px; padding: 10px 16px;
-            font-size: 14px; cursor: pointer; transition: background 0.2s; border: none; background: none;
-            width: 100%; text-align: left; color: #333;
-        }
-        body.rtl .lang-option { text-align: right; }
-        .lang-option:hover { background: #f5f5f5; }
-        .lang-option.active { background: rgba(231,76,60,0.08); color: #e74c3c; font-weight: 600; }
-        .lang-option .native { font-weight: 500; }
-        .lang-option .name { color: #999; font-size: 12px; }
+/* Hero */
+.hero{margin-top:70px;background:linear-gradient(135deg,#1a1a2e 0,#16213e 50%,#0f3460 100%);color:#fff;padding:100px 0;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 50%,rgba(231,76,60,.15) 0,transparent 60%),radial-gradient(circle at 70% 50%,rgba(52,152,219,.1) 0,transparent 50%);animation:heroGlow 8s ease-in-out infinite alternate}
+@keyframes heroGlow{0%{transform:translate(0,0)}100%{transform:translate(2%,2%)}}
+.hero .container{position:relative;z-index:1}
+.hero h1{font-size:48px;font-weight:800;margin-bottom:16px;letter-spacing:1px}
+.hero h1 span{color:#e74c3c}
+.hero p{font-size:18px;color:rgba(255,255,255,.75);max-width:600px;margin:0 auto 32px}
+.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn{padding:14px 36px;border-radius:8px;font-size:16px;font-weight:600;transition:all .3s;display:inline-block;border:none;cursor:pointer;text-align:center}
+.btn-primary{background:#e74c3c;color:#fff}
+.btn-primary:hover{background:#c0392b;transform:translateY(-2px);box-shadow:0 8px 25px rgba(231,76,60,.4)}
+.btn-outline{border:2px solid rgba(255,255,255,.3);color:#fff;background:transparent}
+.btn-outline:hover{border-color:#e74c3c;background:rgba(231,76,60,.1);transform:translateY(-2px)}
+.btn-whatsapp{background:#25D366;color:#fff}
+.btn-whatsapp:hover{background:#1da851;transform:translateY(-2px);box-shadow:0 8px 25px rgba(37,211,102,.4)}
+.hero-stats{display:flex;gap:48px;justify-content:center;margin-top:48px;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat .num{font-size:36px;font-weight:800;color:#e74c3c}
+.hero-stat .label{font-size:14px;color:rgba(255,255,255,.6);margin-top:4px}
 
-        /* ===== Hero ===== */
-        .hero {
-            margin-top: 70px;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            color: #fff;
-            padding: 100px 0;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .hero::before {
-            content: '';
-            position: absolute; top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: radial-gradient(circle at 30% 50%, rgba(231,76,60,0.15) 0%, transparent 60%),
-                        radial-gradient(circle at 70% 50%, rgba(52,152,219,0.1) 0%, transparent 50%);
-            animation: heroGlow 8s ease-in-out infinite alternate;
-        }
-        @keyframes heroGlow {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(2%, 2%); }
-        }
-        .hero .container { position: relative; z-index: 1; }
-        .hero h1 {
-            font-size: 48px; font-weight: 800; margin-bottom: 16px;
-            letter-spacing: 1px;
-        }
-        .hero h1 span { color: #e74c3c; }
-        .hero p {
-            font-size: 18px; color: rgba(255,255,255,0.75);
-            max-width: 600px; margin: 0 auto 32px;
-        }
-        .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-        .btn {
-            padding: 14px 36px; border-radius: 8px; font-size: 16px; font-weight: 600;
-            transition: all 0.3s; display: inline-block; border: none; cursor: pointer;
-            text-align: center;
-        }
-        .btn-primary { background: #e74c3c; color: #fff; }
-        .btn-primary:hover { background: #c0392b; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(231,76,60,0.4); }
-        .btn-outline { border: 2px solid rgba(255,255,255,0.3); color: #fff; background: transparent; }
-        .btn-outline:hover { border-color: #e74c3c; background: rgba(231,76,60,0.1); transform: translateY(-2px); }
-        .btn-whatsapp { background: #25D366; color: #fff; }
-        .btn-whatsapp:hover { background: #1da851; transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37,211,102,0.4); }
-        .hero-stats {
-            display: flex; gap: 48px; justify-content: center; margin-top: 48px;
-            flex-wrap: wrap;
-        }
-        .hero-stat { text-align: center; }
-        .hero-stat .num { font-size: 36px; font-weight: 800; color: #e74c3c; }
-        .hero-stat .label { font-size: 14px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+/* Section */
+.section{padding:80px 0}
+.section-title{text-align:center;margin-bottom:48px}
+.section-title h2{font-size:32px;font-weight:800;margin-bottom:12px}
+.section-title p{color:#777;font-size:16px;max-width:500px;margin:0 auto}
+.section-title .tag{display:inline-block;background:rgba(231,76,60,.1);color:#e74c3c;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:600;margin-bottom:12px}
 
-        /* ===== Section ===== */
-        .section { padding: 80px 0; }
-        .section-title {
-            text-align: center; margin-bottom: 48px;
-        }
-        .section-title h2 {
-            font-size: 32px; font-weight: 800; margin-bottom: 12px;
-        }
-        .section-title p {
-            color: #777; font-size: 16px; max-width: 500px; margin: 0 auto;
-        }
-        .section-title .tag {
-            display: inline-block; background: rgba(231,76,60,0.1); color: #e74c3c;
-            padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;
-            margin-bottom: 12px;
-        }
+/* Filter */
+.filter-bar{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:40px}
+.filter-bar select,.filter-bar input{padding:10px 16px;border:1px solid #ddd;border-radius:6px;font-size:14px;background:#fff;min-width:140px;outline:none;transition:border-color .3s}
+.filter-bar select:focus,.filter-bar input:focus{border-color:#e74c3c}
+.filter-btn{background:#e74c3c;color:#fff;border:none;padding:10px 24px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;transition:background .3s}
+.filter-btn:hover{background:#c0392b}
+.filter-reset{background:#eee;color:#666;border:none;padding:10px 20px;border-radius:6px;font-size:14px;cursor:pointer;transition:background .3s}
+.filter-reset:hover{background:#ddd}
 
-        /* ===== Filter Bar ===== */
-        .filter-bar {
-            display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
-            margin-bottom: 40px;
-        }
-        .filter-bar select, .filter-bar input {
-            padding: 10px 16px; border: 1px solid #ddd; border-radius: 6px;
-            font-size: 14px; background: #fff; min-width: 140px; outline: none;
-            transition: border-color 0.3s;
-        }
-        .filter-bar select:focus, .filter-bar input:focus { border-color: #e74c3c; }
-        .filter-btn {
-            background: #e74c3c; color: #fff; border: none; padding: 10px 24px;
-            border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer;
-            transition: background 0.3s;
-        }
-        .filter-btn:hover { background: #c0392b; }
-        .filter-reset {
-            background: #eee; color: #666; border: none; padding: 10px 20px;
-            border-radius: 6px; font-size: 14px; cursor: pointer; transition: background 0.3s;
-        }
-        .filter-reset:hover { background: #ddd; }
+/* Trailer Card */
+.trailer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:24px}
+.trailer-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06);transition:transform .3s,box-shadow .3s;cursor:pointer;position:relative}
+.trailer-card:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(0,0,0,.12)}
+.trailer-img{height:220px;background:#e8ecf1;position:relative;overflow:hidden}
+.trailer-img img{width:100%;height:100%;object-fit:cover}
+.trailer-img .placeholder-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:64px;opacity:.4}
+.trailer-img .img-count-badge{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.6);color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;display:flex;align-items:center;gap:3px}
+body.rtl .trailer-img .img-count-badge{right:auto;left:10px}
+.trailer-badge{position:absolute;top:12px;left:12px;background:#e74c3c;color:#fff;padding:4px 12px;border-radius:4px;font-size:12px;font-weight:600}
+body.rtl .trailer-badge{left:auto;right:12px}
+.trailer-badge.sold{background:#888}
+.trailer-badge.hot{background:#f39c12}
+.trailer-body{padding:20px}
+.trailer-body h3{font-size:18px;font-weight:700;margin-bottom:8px}
+.trailer-meta{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+.trailer-meta span{font-size:13px;color:#888;display:flex;align-items:center;gap:4px}
+.trailer-meta .icon{font-size:14px}
+.trailer-desc{font-size:14px;color:#666;line-height:1.7;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:16px}
+.trailer-footer{display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid #f0f0f0}
+.trailer-price{font-size:24px;font-weight:800;color:#e74c3c}
+.trailer-price small{font-size:14px;font-weight:400;color:#999}
+.trailer-contact-btn{background:#f5f6fa;color:#333;border:none;padding:8px 16px;border-radius:6px;font-size:13px;cursor:pointer;transition:background .3s}
+.trailer-contact-btn:hover{background:#e8ecf1}
 
-        /* ===== Trailer Cards ===== */
-        .trailer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 24px;
-        }
-        .trailer-card {
-            background: #fff; border-radius: 12px; overflow: hidden;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            position: relative;
-        }
-        .trailer-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.12);
-        }
-        .trailer-img {
-            height: 220px; background: #e8ecf1; position: relative;
-            overflow: hidden;
-        }
-        .trailer-img img {
-            width: 100%; height: 100%; object-fit: cover;
-        }
-        .trailer-img .placeholder-icon {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: 64px; opacity: 0.4;
-        }
-        .trailer-badge {
-            position: absolute; top: 12px; left: 12px;
-            background: #e74c3c; color: #fff; padding: 4px 12px;
-            border-radius: 4px; font-size: 12px; font-weight: 600;
-        }
-        body.rtl .trailer-badge { left: auto; right: 12px; }
-        .trailer-badge.sold { background: #888; }
-        .trailer-badge.hot { background: #f39c12; }
-        .trailer-body { padding: 20px; }
-        .trailer-body h3 {
-            font-size: 18px; font-weight: 700; margin-bottom: 8px;
-        }
-        .trailer-meta {
-            display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 12px;
-        }
-        body.rtl .trailer-meta { flex-direction: row-reverse; }
-        .trailer-meta span {
-            font-size: 13px; color: #888;
-            display: flex; align-items: center; gap: 4px;
-        }
-        .trailer-meta .icon { font-size: 14px; }
-        .trailer-desc {
-            font-size: 14px; color: #666; line-height: 1.7;
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-            overflow: hidden; margin-bottom: 16px;
-        }
-        .trailer-footer {
-            display: flex; justify-content: space-between; align-items: center;
-            padding-top: 16px; border-top: 1px solid #f0f0f0;
-        }
-        body.rtl .trailer-footer { flex-direction: row-reverse; }
-        .trailer-price {
-            font-size: 24px; font-weight: 800; color: #e74c3c;
-        }
-        .trailer-price small {
-            font-size: 14px; font-weight: 400; color: #999;
-        }
-        .trailer-contact-btn {
-            background: #f5f6fa; color: #333; border: none;
-            padding: 8px 16px; border-radius: 6px; font-size: 13px;
-            cursor: pointer; transition: background 0.3s;
-        }
-        .trailer-contact-btn:hover { background: #e8ecf1; }
+.admin-badge-actions{position:absolute;top:12px;right:12px;display:none;gap:6px;z-index:5}
+body.rtl .admin-badge-actions{right:auto;left:12px}
+.admin-mode .admin-badge-actions{display:flex}
+.admin-badge-actions button{width:32px;height:32px;border-radius:6px;border:none;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.admin-badge-actions .edit-btn{background:rgba(52,152,219,.85);color:#fff}
+.admin-badge-actions .edit-btn:hover{background:#2980b9}
+.admin-badge-actions .del-btn{background:rgba(231,76,60,.85);color:#fff}
+.admin-badge-actions .del-btn:hover{background:#c0392b}
 
-        /* Admin badge on cards */
-        .admin-badge-actions {
-            position: absolute; top: 12px; right: 12px; display: none; gap: 6px; z-index: 5;
-        }
-        body.rtl .admin-badge-actions { right: auto; left: 12px; }
-        .admin-mode .admin-badge-actions { display: flex; }
-        .admin-badge-actions button {
-            width: 32px; height: 32px; border-radius: 6px; border: none;
-            font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: all 0.2s;
-        }
-        .admin-badge-actions .edit-btn { background: rgba(52,152,219,0.85); color: #fff; }
-        .admin-badge-actions .edit-btn:hover { background: #2980b9; }
-        .admin-badge-actions .del-btn { background: rgba(231,76,60,0.85); color: #fff; }
-        .admin-badge-actions .del-btn:hover { background: #c0392b; }
+/* Contact */
+.contact-section{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.contact-info h3{font-size:24px;font-weight:700;margin-bottom:16px}
+.contact-info p{color:rgba(255,255,255,.7);margin-bottom:24px;line-height:1.8}
+.contact-item{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.contact-icon{width:48px;height:48px;border-radius:12px;background:rgba(231,76,60,.15);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.contact-icon.whatsapp{background:rgba(37,211,102,.15)}
+.contact-item .label{font-size:13px;color:rgba(255,255,255,.5)}
+.contact-item .value{font-size:16px;font-weight:600}
+.contact-item .value.highlight{color:#e74c3c;font-size:20px}
+.contact-item .value.whatsapp{color:#25D366;font-size:20px}
+.contact-btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
+.contact-btns .btn{padding:12px 24px;font-size:14px}
+.contact-btns .btn-whatsapp{display:inline-flex;align-items:center;gap:6px}
+.contact-form{background:rgba(255,255,255,.05);padding:32px;border-radius:12px}
+.contact-form h4{font-size:18px;font-weight:700;margin-bottom:20px}
+.form-group{margin-bottom:16px}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:12px 16px;border:1px solid rgba(255,255,255,.15);border-radius:6px;background:rgba(255,255,255,.08);color:#fff;font-size:14px;outline:none;transition:border-color .3s}
+.form-group input::placeholder,.form-group textarea::placeholder{color:rgba(255,255,255,.4)}
+.form-group input:focus,.form-group textarea:focus{border-color:#e74c3c}
+.form-group textarea{min-height:100px;resize:vertical}
+.form-group select option{color:#333}
+.submit-btn{width:100%;padding:14px;background:#e74c3c;color:#fff;border:none;border-radius:6px;font-size:16px;font-weight:600;cursor:pointer;transition:background .3s}
+.submit-btn:hover{background:#c0392b}
 
-        /* ===== Contact Section ===== */
-        .contact-section {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            color: #fff;
-        }
-        .contact-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 48px;
-            align-items: start;
-        }
-        .contact-info h3 {
-            font-size: 24px; font-weight: 700; margin-bottom: 16px;
-        }
-        .contact-info p {
-            color: rgba(255,255,255,0.7); margin-bottom: 24px; line-height: 1.8;
-        }
-        .contact-item {
-            display: flex; align-items: center; gap: 16px; margin-bottom: 20px;
-        }
-        body.rtl .contact-item { flex-direction: row-reverse; }
-        .contact-icon {
-            width: 48px; height: 48px; border-radius: 12px;
-            background: rgba(231,76,60,0.15);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px; flex-shrink: 0;
-        }
-        .contact-icon.whatsapp { background: rgba(37,211,102,0.15); }
-        .contact-item .label { font-size: 13px; color: rgba(255,255,255,0.5); }
-        .contact-item .value { font-size: 16px; font-weight: 600; }
-        .contact-item .value.highlight { color: #e74c3c; font-size: 20px; }
-        .contact-item .value.whatsapp { color: #25D366; font-size: 20px; }
-        .contact-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
-        .contact-btns .btn { padding: 12px 24px; font-size: 14px; }
-        .contact-btns .btn-whatsapp { display: inline-flex; align-items: center; gap: 6px; }
+/* ===== Vehicle Detail Modal ===== */
+.detail-modal .modal-box{max-width:800px;text-align:left;padding:0;overflow:hidden;border-radius:16px}
+.detail-carousel{position:relative;width:100%;background:#1a1a2e;min-height:300px;display:flex;align-items:center;justify-content:center}
+.detail-carousel .main-img{width:100%;max-height:450px;object-fit:contain;display:block}
+.detail-carousel .no-img{color:rgba(255,255,255,.3);font-size:80px;text-align:center;padding:60px 0}
+.carousel-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.5);color:#fff;border:none;width:44px;height:44px;border-radius:50%;font-size:22px;cursor:pointer;transition:background .3s;display:flex;align-items:center;justify-content:center;z-index:2}
+.carousel-btn:hover{background:rgba(0,0,0,.8)}
+.carousel-prev{left:16px}
+.carousel-next{right:16px}
+body.rtl .carousel-prev{left:auto;right:16px}
+body.rtl .carousel-next{right:auto;left:16px}
+.carousel-dots{display:flex;gap:6px;justify-content:center;padding:10px;position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.6))}
+.carousel-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4);border:none;cursor:pointer;transition:all .3s;padding:0}
+.carousel-dot.active{background:#e74c3c;width:24px;border-radius:4px}
+.detail-thumbs{display:flex;gap:6px;padding:8px 12px;background:#f5f5f5;overflow-x:auto}
+.detail-thumbs img{width:60px;height:45px;object-fit:cover;border-radius:4px;cursor:pointer;opacity:.5;transition:all .3s;flex-shrink:0;border:2px solid transparent}
+.detail-thumbs img.active{opacity:1;border-color:#e74c3c}
+.detail-info{padding:24px}
+.detail-info h2{font-size:24px;font-weight:800;margin-bottom:12px}
+.detail-meta{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px}
+.detail-meta span{font-size:14px;color:#888;display:flex;align-items:center;gap:4px}
+.detail-price{font-size:32px;font-weight:800;color:#e74c3c;margin-bottom:16px}
+.detail-price small{font-size:16px;font-weight:400;color:#999}
+.detail-desc{font-size:15px;color:#555;line-height:1.8;margin-bottom:20px}
+.detail-actions{display:flex;gap:12px;flex-wrap:wrap}
+.detail-actions .btn{padding:12px 28px;font-size:15px;flex:1;min-width:140px;display:flex;align-items:center;justify-content:center;gap:6px}
+.detail-close{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.4);color:#fff;border:none;font-size:18px;cursor:pointer;z-index:5;display:flex;align-items:center;justify-content:center;transition:background .3s}
+.detail-close:hover{background:rgba(0,0,0,.7)}
+body.rtl .detail-close{right:auto;left:12px}
 
-        .contact-form { background: rgba(255,255,255,0.05); padding: 32px; border-radius: 12px; }
-        .contact-form h4 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
-        .form-group { margin-bottom: 16px; }
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%; padding: 12px 16px; border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 6px; background: rgba(255,255,255,0.08);
-            color: #fff; font-size: 14px; outline: none; transition: border-color 0.3s;
-        }
-        .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(255,255,255,0.4); }
-        .form-group input:focus, .form-group textarea:focus { border-color: #e74c3c; }
-        .form-group textarea { min-height: 100px; resize: vertical; }
-        .form-group select option { color: #333; }
-        .submit-btn {
-            width: 100%; padding: 14px; background: #e74c3c; color: #fff;
-            border: none; border-radius: 6px; font-size: 16px; font-weight: 600;
-            cursor: pointer; transition: background 0.3s;
-        }
-        .submit-btn:hover { background: #c0392b; }
+/* Modal common */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:20px}
+.modal-overlay.active{display:flex}
+.modal-box{background:#fff;border-radius:16px;padding:40px;text-align:center;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);max-height:90vh;overflow-y:auto}
+body.rtl .modal-box{text-align:right}
+.modal-box h3{margin-bottom:12px;font-size:20px;color:#1a1a2e}
+.modal-box p{color:#888;font-size:14px;margin-bottom:20px}
+.modal-qr{width:200px;height:200px;background:#e8ecf1;margin:0 auto 20px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#999;overflow:hidden}
+.modal-qr img{width:100%;height:100%;object-fit:contain}
+.modal-close{padding:10px 32px;background:#f0f0f0;border:none;border-radius:6px;font-size:14px;cursor:pointer;transition:background .3s}
+.modal-close:hover{background:#ddd}
 
-        /* ===== Modal (generic) ===== */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.6); z-index: 2000;
-            align-items: center; justify-content: center;
-            backdrop-filter: blur(4px);
-            padding: 20px;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-box {
-            background: #fff; border-radius: 16px; padding: 40px;
-            text-align: center; max-width: 400px; width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            max-height: 90vh; overflow-y: auto;
-        }
-        body.rtl .modal-box { text-align: right; }
-        .modal-box h3 { margin-bottom: 12px; font-size: 20px; color: #1a1a2e; }
-        .modal-box p { color: #888; font-size: 14px; margin-bottom: 20px; }
-        .modal-qr {
-            width: 200px; height: 200px; background: #e8ecf1; margin: 0 auto 20px;
-            border-radius: 8px; display: flex; align-items: center; justify-content: center;
-            font-size: 14px; color: #999; overflow: hidden;
-        }
-        .modal-qr img { width: 100%; height: 100%; object-fit: contain; }
-        .modal-close {
-            padding: 10px 32px; background: #f0f0f0; border: none;
-            border-radius: 6px; font-size: 14px; cursor: pointer; transition: background 0.3s;
-        }
-        .modal-close:hover { background: #ddd; }
+/* Admin Panel */
+.admin-modal .modal-box{max-width:720px;text-align:left}
+.admin-modal .modal-box h3{text-align:center}
+.admin-tabs{display:flex;gap:4px;margin-bottom:24px;flex-wrap:wrap;background:#f0f0f0;border-radius:8px;padding:4px}
+.admin-tab{flex:1;padding:10px 16px;border:none;background:transparent;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;color:#888;transition:all .2s;text-align:center;min-width:80px}
+.admin-tab.active{background:#fff;color:#e74c3c;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.admin-panel{display:none}
+.admin-panel.active{display:block}
+.admin-panel label{display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:4px;margin-top:16px}
+.admin-panel label:first-child{margin-top:0}
+.admin-panel input,.admin-panel textarea,.admin-panel select{width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:6px;font-size:14px;outline:none;transition:border-color .3s}
+.admin-panel input:focus,.admin-panel textarea:focus,.admin-panel select:focus{border-color:#e74c3c}
+.admin-panel textarea{min-height:80px;resize:vertical}
+.admin-panel .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.admin-panel .help-text{font-size:12px;color:#999;margin-top:4px}
+.admin-save-btn{width:100%;margin-top:24px;padding:14px;background:#2ecc71;color:#fff;border:none;border-radius:6px;font-size:16px;font-weight:600;cursor:pointer;transition:background .3s}
+.admin-save-btn:hover{background:#27ae60}
+.admin-vehicle-item{display:flex;align-items:center;gap:12px;padding:12px;background:#f9f9f9;border-radius:8px;margin-bottom:8px}
+.admin-vehicle-item .vinfo{flex:1}
+.admin-vehicle-item .vinfo .vtitle{font-weight:600;font-size:14px}
+.admin-vehicle-item .vinfo .vmeta{font-size:12px;color:#888}
+.admin-vehicle-item button{padding:6px 14px;border-radius:4px;border:none;font-size:12px;cursor:pointer}
+.admin-vehicle-item .vedit{background:#3498db;color:#fff}
+.admin-vehicle-item .vdel{background:#e74c3c;color:#fff}
+.add-vehicle-btn{width:100%;padding:12px;background:#3498db;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;margin-bottom:16px;transition:background .3s}
+.add-vehicle-btn:hover{background:#2980b9}
+.admin-login-input{width:100%;padding:12px 16px;border:1px solid #ddd;border-radius:6px;font-size:16px;text-align:center;outline:none;margin-bottom:16px}
+.admin-login-input:focus{border-color:#e74c3c}
+.admin-login-error{color:#e74c3c;font-size:13px;display:none;margin-bottom:12px}
+.file-upload-area{border:2px dashed #ddd;border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:all .3s;margin-top:8px}
+.file-upload-area:hover{border-color:#e74c3c;background:rgba(231,76,60,.03)}
+.file-upload-area .preview-img{max-width:120px;max-height:120px;margin:0 auto 8px;border-radius:4px}
+.file-upload-area .hint{font-size:13px;color:#999}
+.file-upload-area input[type=file]{display:none}
+.file-upload-area input[type=text]{width:100%;margin-top:8px;border:1px solid #eee;padding:8px 12px;border-radius:4px;font-size:13px}
 
-        /* ===== Admin Panel Modal ===== */
-        .admin-modal .modal-box { max-width: 700px; text-align: left; }
-        .admin-modal .modal-box h3 { text-align: center; }
-        .admin-tabs {
-            display: flex; gap: 4px; margin-bottom: 24px; flex-wrap: wrap;
-            background: #f0f0f0; border-radius: 8px; padding: 4px;
-        }
-        body.rtl .admin-tabs { flex-direction: row-reverse; }
-        .admin-tab {
-            flex: 1; padding: 10px 16px; border: none; background: transparent;
-            border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer;
-            color: #888; transition: all 0.2s; text-align: center; min-width: 80px;
-        }
-        .admin-tab.active { background: #fff; color: #e74c3c; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        .admin-panel { display: none; }
-        .admin-panel.active { display: block; }
+/* Multi-image upload */
+.img-upload-list{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.img-upload-item{position:relative;width:90px;height:90px;border-radius:8px;overflow:hidden;border:1px solid #eee;flex-shrink:0}
+.img-upload-item img{width:100%;height:100%;object-fit:cover}
+.img-upload-item .remove-img{position:absolute;top:2px;right:2px;width:22px;height:22px;border-radius:50%;background:rgba(231,76,60,.85);color:#fff;border:none;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.img-add-area{width:90px;height:90px;border:2px dashed #ddd;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:#bbb;font-size:11px;gap:4px;transition:all .3s;flex-shrink:0;background:none}
+.img-add-area:hover{border-color:#e74c3c;color:#e74c3c}
+.img-add-area .plus{font-size:28px;line-height:1}
+.img-upload-url-row{display:flex;gap:8px;margin-top:8px}
+.img-upload-url-row input{flex:1;padding:8px 12px;border:1px solid #ddd;border-radius:6px;font-size:13px;outline:none}
+.img-upload-url-row input:focus{border-color:#e74c3c}
+.img-upload-url-row button{padding:8px 16px;background:#3498db;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;white-space:nowrap}
 
-        .admin-panel label {
-            display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px; margin-top: 16px;
-        }
-        body.rtl .admin-panel label { text-align: right; }
-        .admin-panel label:first-child { margin-top: 0; }
-        .admin-panel input, .admin-panel textarea, .admin-panel select {
-            width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 6px;
-            font-size: 14px; outline: none; transition: border-color 0.3s;
-        }
-        .admin-panel input:focus, .admin-panel textarea:focus, .admin-panel select:focus { border-color: #e74c3c; }
-        .admin-panel textarea { min-height: 80px; resize: vertical; }
-        .admin-panel .form-row {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-        }
-        body.rtl .admin-panel .form-row { direction: rtl; }
-        .admin-panel .help-text { font-size: 12px; color: #999; margin-top: 4px; }
+/* Footer */
+footer{background:#111;color:rgba(255,255,255,.6);padding:32px 0;text-align:center;font-size:14px}
+footer a{color:rgba(255,255,255,.8)}
+footer a:hover{color:#e74c3c}
 
-        .admin-save-btn {
-            width: 100%; margin-top: 24px; padding: 14px;
-            background: #2ecc71; color: #fff; border: none; border-radius: 6px;
-            font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.3s;
-        }
-        .admin-save-btn:hover { background: #27ae60; }
+/* Toast */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:#2ecc71;color:#fff;padding:14px 28px;border-radius:8px;font-size:14px;font-weight:600;z-index:3000;opacity:0;transition:all .4s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.error{background:#e74c3c}
 
-        .admin-vehicle-item {
-            display: flex; align-items: center; gap: 12px; padding: 12px;
-            background: #f9f9f9; border-radius: 8px; margin-bottom: 8px;
-        }
-        body.rtl .admin-vehicle-item { flex-direction: row-reverse; }
-        .admin-vehicle-item .vinfo { flex: 1; }
-        .admin-vehicle-item .vinfo .vtitle { font-weight: 600; font-size: 14px; }
-        .admin-vehicle-item .vinfo .vmeta { font-size: 12px; color: #888; }
-        .admin-vehicle-item button {
-            padding: 6px 14px; border-radius: 4px; border: none; font-size: 12px; cursor: pointer;
-        }
-        .admin-vehicle-item .vedit { background: #3498db; color: #fff; }
-        .admin-vehicle-item .vdel { background: #e74c3c; color: #fff; }
-        .add-vehicle-btn {
-            width: 100%; padding: 12px; background: #3498db; color: #fff;
-            border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer;
-            margin-bottom: 16px; transition: background 0.3s;
-        }
-        .add-vehicle-btn:hover { background: #2980b9; }
+/* Scroll Top */
+.scroll-top{position:fixed;right:24px;bottom:24px;width:44px;height:44px;border-radius:50%;background:#e74c3c;color:#fff;border:none;font-size:20px;cursor:pointer;box-shadow:0 4px 15px rgba(231,76,60,.3);opacity:0;transform:translateY(20px);transition:all .3s;z-index:500}
+.scroll-top.visible{opacity:1;transform:translateY(0)}
+.scroll-top:hover{background:#c0392b}
+body.rtl .scroll-top{right:auto;left:24px}
 
-        .admin-login-input {
-            width: 100%; padding: 12px 16px; border: 1px solid #ddd; border-radius: 6px;
-            font-size: 16px; text-align: center; outline: none; margin-bottom: 16px;
-        }
-        .admin-login-input:focus { border-color: #e74c3c; }
-        .admin-login-error { color: #e74c3c; font-size: 13px; display: none; margin-bottom: 12px; }
+.empty-state{text-align:center;padding:60px 20px;color:#999;display:none}
+.empty-state .icon{font-size:64px;margin-bottom:16px}
+.empty-state h3{font-size:20px;color:#666;margin-bottom:8px}
+.loading-spinner{text-align:center;padding:40px;display:none}
+.loading-spinner .spinner{width:40px;height:40px;border:3px solid #eee;border-top-color:#e74c3c;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-        .file-upload-area {
-            border: 2px dashed #ddd; border-radius: 8px; padding: 20px;
-            text-align: center; cursor: pointer; transition: all 0.3s; margin-top: 8px;
-        }
-        .file-upload-area:hover { border-color: #e74c3c; background: rgba(231,76,60,0.03); }
-        .file-upload-area .preview-img {
-            max-width: 120px; max-height: 120px; margin: 0 auto 8px; border-radius: 4px;
-        }
-        .file-upload-area .hint { font-size: 13px; color: #999; }
-        .file-upload-area input[type="file"] { display: none; }
-        .file-upload-area input[type="text"] {
-            width: 100%; margin-top: 8px; border: 1px solid #eee; padding: 8px 12px; border-radius: 4px; font-size: 13px;
-        }
+@media(max-width:768px){
+.menu-toggle{display:flex}
+.nav-links{display:none;position:absolute;top:70px;left:0;right:0;background:#fff;flex-direction:column;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.1);gap:16px}
+.nav-links.open{display:flex}
+.hero h1{font-size:32px}
+.hero p{font-size:16px}
+.hero{padding:60px 0}
+.hero-stats{gap:24px}
+.hero-stat .num{font-size:28px}
+.contact-grid{grid-template-columns:1fr}
+.trailer-grid{grid-template-columns:1fr}
+.section-title h2{font-size:26px}
+.filter-bar select,.filter-bar input{min-width:100px;flex:1}
+.admin-panel .form-row{grid-template-columns:1fr}
+.modal-box{padding:24px}
+.contact-btns .btn{width:100%;text-align:center;justify-content:center}
+.lang-dropdown{right:auto;left:0}
+body.rtl .lang-dropdown{left:auto;right:0}
+.detail-modal .modal-box{max-width:100%;border-radius:0;min-height:100vh}
+.detail-carousel .main-img{max-height:300px}
+.detail-info{padding:16px}
+.detail-info h2{font-size:20px}
+.detail-price{font-size:26px}
+.detail-thumbs img{width:50px;height:38px}
+.detail-actions .btn{min-width:0;padding:10px 16px;font-size:13px}
+}
 
-        /* ===== Footer ===== */
-        footer {
-            background: #111; color: rgba(255,255,255,0.6);
-            padding: 32px 0; text-align: center; font-size: 14px;
-        }
-        footer a { color: rgba(255,255,255,0.8); }
-        footer a:hover { color: #e74c3c; }
-
-        /* ===== Toast ===== */
-        .toast {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
-            background: #2ecc71; color: #fff; padding: 14px 28px;
-            border-radius: 8px; font-size: 14px; font-weight: 600;
-            z-index: 3000; opacity: 0; transition: all 0.4s;
-            pointer-events: none; white-space: nowrap;
-        }
-        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-        .toast.error { background: #e74c3c; }
-
-        /* ===== Scroll Top ===== */
-        .scroll-top {
-            position: fixed; right: 24px; bottom: 24px;
-            width: 44px; height: 44px; border-radius: 50%;
-            background: #e74c3c; color: #fff; border: none;
-            font-size: 20px; cursor: pointer; box-shadow: 0 4px 15px rgba(231,76,60,0.3);
-            opacity: 0; transform: translateY(20px);
-            transition: all 0.3s; z-index: 500;
-        }
-        .scroll-top.visible { opacity: 1; transform: translateY(0); }
-        .scroll-top:hover { background: #c0392b; }
-        body.rtl .scroll-top { right: auto; left: 24px; }
-
-        /* ===== Empty State ===== */
-        .empty-state {
-            text-align: center; padding: 60px 20px; color: #999; display: none;
-        }
-        .empty-state .icon { font-size: 64px; margin-bottom: 16px; }
-        .empty-state h3 { font-size: 20px; color: #666; margin-bottom: 8px; }
-
-        /* ===== Loading ===== */
-        .loading-spinner {
-            text-align: center; padding: 40px; display: none;
-        }
-        .loading-spinner .spinner {
-            width: 40px; height: 40px; border: 3px solid #eee;
-            border-top-color: #e74c3c; border-radius: 50%;
-            animation: spin 0.8s linear infinite; margin: 0 auto 12px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* ===== Responsive ===== */
-        @media (max-width: 768px) {
-            .menu-toggle { display: flex; }
-            .nav-links {
-                display: none; position: absolute; top: 70px; left: 0; right: 0;
-                background: #fff; flex-direction: column; padding: 20px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.1); gap: 16px;
-            }
-            body.rtl .nav-links { right: 0; left: 0; }
-            .nav-links.open { display: flex; }
-            .hero h1 { font-size: 32px; }
-            .hero p { font-size: 16px; }
-            .hero { padding: 60px 0; }
-            .hero-stats { gap: 24px; }
-            .hero-stat .num { font-size: 28px; }
-            .contact-grid { grid-template-columns: 1fr; }
-            .trailer-grid { grid-template-columns: 1fr; }
-            .section-title h2 { font-size: 26px; }
-            .filter-bar select, .filter-bar input { min-width: 100px; flex: 1; }
-            .admin-panel .form-row { grid-template-columns: 1fr; }
-            .modal-box { padding: 24px; }
-            .contact-btns .btn { width: 100%; text-align: center; justify-content: center; }
-            .lang-dropdown { right: auto; left: 0; }
-            body.rtl .lang-dropdown { left: auto; right: 0; }
-        }
-        @media (max-width: 480px) {
-            .hero h1 { font-size: 26px; }
-            .hero-stat .num { font-size: 22px; }
-            .toast { white-space: normal; max-width: 80vw; text-align: center; }
-        }
-    </style>
+@media(max-width:480px){
+.hero h1{font-size:26px}
+.hero-stat .num{font-size:22px}
+.toast{white-space:normal;max-width:80vw;text-align:center}
+}
+</style>
 </head>
 <body>
 
-    <!-- ===== Header ===== -->
-    <header>
-        <nav class="container">
-            <a href="#" class="logo" id="logoDisplay">
-                🚛 顺盈汽贸
-                <span id="logoSlogan">二手挂车 · 专业交易平台</span>
-            </a>
-            <button class="menu-toggle" id="menuToggle" aria-label="Menu">
-                <span></span><span></span><span></span>
-            </button>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="#listings" id="navVehicles">车辆展示</a></li>
-                <li><a href="#contact" id="navContact">联系我们</a></li>
-                <li>
-                    <div class="lang-switcher">
-                        <button class="lang-current" id="langCurrent" onclick="toggleLangDropdown()">🌐 中文</button>
-                        <div class="lang-dropdown" id="langDropdown"></div>
-                    </div>
-                </li>
-                <li><button class="admin-entry" id="adminEntryBtn" onclick="showAdminLogin()">⚙️</button></li>
-            </ul>
-        </nav>
-    </header>
-
-    <!-- ===== Hero ===== -->
-    <section class="hero">
-        <div class="container">
-            <h1 id="heroTitle">优质二手挂车 · <span>诚信交易</span></h1>
-            <p id="heroDesc">专注二手挂车交易多年，每辆车均经过专业检测。价格透明，手续齐全，让您买得放心、用得安心。</p>
-            <div class="hero-btns">
-                <a href="#listings" class="btn btn-primary" id="heroBtnBrowse">浏览车辆</a>
-                <a href="#contact" class="btn btn-outline" id="heroBtnContact">联系我们</a>
-                <a href="#" id="heroWhatsappBtn" class="btn btn-whatsapp" target="_blank" style="display:inline-flex;align-items:center;gap:6px;">💬 WhatsApp</a>
-            </div>
-            <div class="hero-stats">
-                <div class="hero-stat">
-                    <div class="num" id="statVehicles">50+</div>
-                    <div class="label" id="statVehiclesLabel">在售车辆</div>
-                </div>
-                <div class="hero-stat">
-                    <div class="num">98%</div>
-                    <div class="label" id="statSatisfaction">客户满意</div>
-                </div>
-                <div class="hero-stat">
-                    <div class="num">5年+</div>
-                    <div class="label" id="statExperience">行业经验</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ===== Trailer Listings ===== -->
-    <section class="section" id="listings">
-        <div class="container">
-            <div class="section-title">
-                <span class="tag" id="sectionTag">🚛 精选车源</span>
-                <h2 id="sectionTitle">在售挂车展示</h2>
-                <p id="sectionDesc">所有车辆均经过专业检测，车况真实描述，支持现场看车</p>
-            </div>
-
-            <div class="filter-bar">
-                <select id="filterType">
-                    <option value="all" id="filterAllTypes">全部类型</option>
-                    <option value="平板挂车">平板挂车</option>
-                    <option value="仓栅挂车">仓栅挂车</option>
-                    <option value="厢式挂车">厢式挂车</option>
-                    <option value="低平板挂车">低平板挂车</option>
-                    <option value="集装箱挂车">集装箱挂车</option>
-                </select>
-                <select id="filterYear">
-                    <option value="all" id="filterAllYears">全部年份</option>
-                    <option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option>
-                    <option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option>
-                    <option value="2019" id="filterBefore2019">2019年及以前</option>
-                </select>
-                <select id="filterPrice">
-                    <option value="all" id="filterAllPrices">全部价格</option>
-                    <option value="0-5" id="filterUnder5">5万以下</option>
-                    <option value="5-10" id="filter5to10">5-10万</option>
-                    <option value="10-15" id="filter10to15">10-15万</option>
-                    <option value="15-999" id="filterOver15">15万以上</option>
-                </select>
-                <input type="text" id="filterSearch" placeholder="🔍 搜索车型或描述...">
-                <button class="filter-btn" onclick="applyFilters()" id="filterBtn">筛选</button>
-                <button class="filter-reset" onclick="resetFilters()" id="filterReset">重置</button>
-            </div>
-
-            <div class="loading-spinner" id="loading">
-                <div class="spinner"></div>
-                <p id="loadingText">正在加载车辆数据...</p>
-            </div>
-
-            <div class="trailer-grid" id="trailerGrid"></div>
-
-            <div class="empty-state" id="emptyState">
-                <div class="icon">🔍</div>
-                <h3 id="emptyTitle">没有找到匹配的车辆</h3>
-                <p id="emptyDesc">试试调整筛选条件，或直接联系我们咨询更多车源</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- ===== Contact ===== -->
-    <section class="section contact-section" id="contact">
-        <div class="container">
-            <div class="section-title">
-                <span class="tag" style="background:rgba(231,76,60,0.2);">💬</span>
-                <h2 style="color:#fff;" id="contactSectionTitle">联系我们</h2>
-                <p style="color:rgba(255,255,255,0.6);" id="contactSectionDesc">有任何问题或想看车，随时联系我们</p>
-            </div>
-            <div class="contact-grid">
-                <div class="contact-info">
-                    <h3 id="contactInfoTitle">联系方式</h3>
-                    <p id="contactInfoDesc">我们承诺：所有车辆真实在售，价格透明，欢迎来电咨询或到店看车。</p>
-                    <div class="contact-item">
-                        <div class="contact-icon">📞</div>
-                        <div>
-                            <div class="label" id="contactLabelPhone">联系电话</div>
-                            <div class="value highlight" id="displayPhone">138-8888-8888</div>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <div class="contact-icon">💬</div>
-                        <div>
-                            <div class="label" id="contactLabelWechat">微信</div>
-                            <div class="value" id="displayWechat">ShunYingTrailer</div>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <div class="contact-icon whatsapp">📱</div>
-                        <div>
-                            <div class="label" id="contactLabelWhatsapp">WhatsApp</div>
-                            <div class="value whatsapp" id="displayWhatsapp">+62 812-3456-7890</div>
-                            <a href="#" id="whatsappLink" target="_blank" style="font-size:12px;color:#25D366;" class="whatsappMsgLabel">发消息 →</a>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <div class="contact-icon">📍</div>
-                        <div>
-                            <div class="label" id="contactLabelAddress">地址</div>
-                            <div class="value" id="displayAddress">山东省济宁市梁山县拳铺镇工业园</div>
-                        </div>
-                    </div>
-                    <div class="contact-btns">
-                        <button class="btn btn-primary" onclick="showWechat()" id="contactBtnWechat">📱 查看微信二维码</button>
-                        <a href="#" id="whatsappBtnFooter" class="btn btn-whatsapp" target="_blank" style="display:inline-flex;align-items:center;gap:6px;">💬 WhatsApp</a>
-                    </div>
-                </div>
-                <div class="contact-form">
-                    <h4 id="formTitle">在线留言咨询</h4>
-                    <form id="contactForm" onsubmit="handleSubmit(event)">
-                        <div class="form-group">
-                            <input type="text" id="formName" placeholder="您的姓名" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="tel" id="formPhone" placeholder="手机号码" required>
-                        </div>
-                        <div class="form-group">
-                            <select id="formInterest">
-                                <option value="" id="formInterestPlaceholder">感兴趣的类型</option>
-                                <option>平板挂车</option>
-                                <option>仓栅挂车</option>
-                                <option>厢式挂车</option>
-                                <option>低平板挂车</option>
-                                <option>集装箱挂车</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <textarea id="formMessage" placeholder="留言内容（选填）"></textarea>
-                        </div>
-                        <button type="submit" class="submit-btn" id="formSubmit">提交咨询</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ===== Footer ===== -->
-    <footer>
-        <div class="container">
-            <p id="footerText">© 2026 顺盈汽贸 · 二手挂车交易平台 &nbsp;|&nbsp; 电话：<a href="tel:13888888888" id="footerPhone">138-8888-8888</a></p>
-            <p style="margin-top: 8px; font-size: 12px;" id="footerAddr">山东省济宁市梁山县 · 专注二手挂车交易</p>
-        </div>
-    </footer>
-
-    <!-- ===== WeChat Modal ===== -->
-    <div class="modal-overlay" id="wechatModal">
-        <div class="modal-box">
-            <h3 id="wechatModalTitle">📱 扫码添加微信</h3>
-            <p id="wechatModalDesc">长按识别或扫描下方二维码添加好友</p>
-            <div class="modal-qr" id="qrContainer">
-                <div style="text-align: center;">
-                    <div style="font-size: 48px; margin-bottom: 8px;">💬</div>
-                    <div id="qrPlaceholderText" style="font-size:12px;">（请上传微信二维码图片）</div>
-                    <div style="font-size: 16px; font-weight: 600; color: #333; margin-top: 8px;" id="qrWechatId">ShunYingTrailer</div>
-                </div>
-            </div>
-            <button class="modal-close" id="wechatModalClose" onclick="hideWechat()">关闭</button>
-        </div>
-    </div>
-
-    <!-- ===== Admin Login Modal ===== -->
-    <div class="modal-overlay" id="adminLoginModal">
-        <div class="modal-box" style="max-width:360px;">
-            <h3 id="adminLoginTitle">⚙️ 管理后台</h3>
-            <p id="adminLoginDesc">请输入管理密码以编辑网站内容</p>
-            <input type="password" class="admin-login-input" id="adminPwdInput" placeholder="" onkeydown="if(event.key==='Enter') adminLogin()">
-            <div class="admin-login-error" id="adminLoginError">❌ 密码错误，请重试</div>
-            <button class="btn btn-primary" onclick="adminLogin()" style="width:100%;" id="adminLoginBtn">登录</button>
-            <button class="modal-close" onclick="hideAdminLogin()" style="margin-top:12px;width:100%;" id="adminLoginCancel">取消</button>
-        </div>
-    </div>
-
-    <!-- ===== Admin Panel Modal ===== -->
-    <div class="modal-overlay admin-modal" id="adminPanelModal">
-        <div class="modal-box">
-            <h3>⚙️</h3>
-            <p style="text-align:center;color:#888;font-size:13px;" id="adminPanelHint">修改后点击保存更改按钮即可生效</p>
-
-            <div class="admin-tabs">
-                <button class="admin-tab active" data-tab="tabCompany" onclick="switchAdminTab('tabCompany')" id="adminTabCompany">公司信息</button>
-                <button class="admin-tab" data-tab="tabVehicles" onclick="switchAdminTab('tabVehicles')" id="adminTabVehicles">车辆管理</button>
-                <button class="admin-tab" data-tab="tabQr" onclick="switchAdminTab('tabQr')" id="adminTabQr">二维码</button>
-            </div>
-
-            <div class="admin-panel active" id="tabCompany">
-                <label id="adminLabelCompany">公司名称</label>
-                <input type="text" id="editCompanyName">
-                <label id="adminLabelSlogan">公司标语</label>
-                <input type="text" id="editSlogan">
-                <label id="adminLabelHeroTitle">Hero 标题</label>
-                <input type="text" id="editHeroTitle">
-                <label id="adminLabelHeroDesc">Hero 描述</label>
-                <textarea id="editHeroDesc" rows="2"></textarea>
-                <div class="form-row">
-                    <div>
-                        <label id="adminLabelPhone">联系电话</label>
-                        <input type="text" id="editPhone">
-                    </div>
-                    <div>
-                        <label id="adminLabelWechat">微信 ID</label>
-                        <input type="text" id="editWechat">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div>
-                        <label id="adminLabelWhatsapp">WhatsApp 号码</label>
-                        <input type="text" id="editWhatsapp" placeholder="628123456789">
-                        <div class="help-text" id="adminWhatsappHelp">只需数字，不要 + 号或空格</div>
-                    </div>
-                    <div>
-                        <label id="adminLabelWhatsappDisplay">WhatsApp 显示文字</label>
-                        <input type="text" id="editWhatsappDisplay">
-                    </div>
-                </div>
-                <label id="adminLabelAddress">地址</label>
-                <input type="text" id="editAddress">
-            </div>
-
-            <div class="admin-panel" id="tabVehicles">
-                <button class="add-vehicle-btn" onclick="addNewVehicle()" id="adminAddVehicle">＋ 添加新车</button>
-                <div id="vehicleList"></div>
-            </div>
-
-            <div class="admin-panel" id="tabQr">
-                <label id="adminLabelQr">微信二维码图片</label>
-                <p style="font-size:12px;color:#999;margin-bottom:8px;" id="adminQrHint">可以上传图片文件，或输入图片网址</p>
-                <div class="file-upload-area" id="qrUploadArea" onclick="document.getElementById('qrFileInput').click()">
-                    <img id="qrPreviewImg" class="preview-img" style="display:none;" alt="QR Preview">
-                    <div class="hint" id="qrUploadHint">点击上传二维码图片</div>
-                    <input type="file" id="qrFileInput" accept="image/*" onchange="handleQrFile(event)">
-                    <input type="text" id="qrUrlInput" placeholder="或输入图片网址" onclick="event.stopPropagation()">
-                </div>
-                <div style="margin-top:8px;">
-                    <button class="btn" style="background:#eee;color:#666;padding:6px 16px;font-size:12px;" onclick="clearQrImage()" id="adminClearQr">清除图片</button>
-                </div>
-            </div>
-
-            <button class="admin-save-btn" onclick="saveAdminChanges()" id="adminSaveBtn">💾 保存更改</button>
-            <button class="modal-close" onclick="hideAdminPanel()" style="width:100%;margin-top:12px;" id="adminCloseBtn">关闭管理后台</button>
-        </div>
-    </div>
-
-    <!-- ===== Vehicle Edit Modal ===== -->
-    <div class="modal-overlay" id="vehicleEditModal">
-        <div class="modal-box" style="max-width:600px;text-align:left;">
-            <h3 style="text-align:center;" id="vehicleEditTitle">编辑车辆</h3>
-            <input type="hidden" id="veId">
-            <label id="veLabelTitle">车辆标题</label>
-            <input type="text" id="veTitle">
-            <div class="form-row">
-                <div>
-                    <label id="veLabelType">类型</label>
-                    <select id="veType"><option>平板挂车</option><option>仓栅挂车</option><option>厢式挂车</option><option>低平板挂车</option><option>集装箱挂车</option></select>
-                </div>
-                <div>
-                    <label id="veLabelYear">年份</label>
-                    <input type="number" id="veYear" min="2000" max="2030">
-                </div>
-            </div>
-            <div class="form-row">
-                <div>
-                    <label id="veLabelPrice">价格（万元）</label>
-                    <input type="number" id="vePrice" step="0.1">
-                </div>
-                <div>
-                    <label id="veLabelMileage">里程</label>
-                    <input type="text" id="veMileage" placeholder="如 8万公里">
-                </div>
-            </div>
-            <div class="form-row">
-                <div>
-                    <label id="veLabelLocation">位置</label>
-                    <input type="text" id="veLocation" placeholder="山东·梁山">
-                </div>
-                <div>
-                    <label id="veLabelBadge">标签</label>
-                    <input type="text" id="veBadge" placeholder="精品车况">
-                </div>
-            </div>
-            <label id="veLabelDesc">描述</label>
-            <textarea id="veDesc" rows="3"></textarea>
-            <label id="veLabelImage">图片 URL（可选）</label>
-            <input type="text" id="veImage" placeholder="">
-            <div style="display:flex;gap:12px;margin-top:20px;">
-                <button class="btn btn-primary" onclick="saveVehicle()" style="flex:1;" id="veSaveBtn">保存车辆</button>
-                <button class="modal-close" onclick="hideVehicleEdit()" style="flex:1;" id="veCancelBtn">取消</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ===== Scroll Top ===== -->
-    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-    <div class="toast" id="toast"></div>
-
-    <script>
-        // ============================================================
-        //  i18n DATA
-        // ============================================================
-        const LANGUAGES = [
-            { code: 'zh-CN', native: '中文', name: 'Chinese', dir: 'ltr' },
-            { code: 'en',     native: 'English', name: 'English', dir: 'ltr' },
-            { code: 'ar',     native: 'العربية', name: 'Arabic', dir: 'rtl' },
-            { code: 'fa',     native: 'فارسی', name: 'Persian', dir: 'rtl' },
-            { code: 'tr',     native: 'Türkçe', name: 'Turkish', dir: 'ltr' },
-            { code: 'ku',     native: 'کوردی', name: 'Kurdish', dir: 'rtl' },
-            { code: 'ur',     native: 'اردو', name: 'Urdu', dir: 'rtl' },
-        ];
-
-        const I18N = {
-            'zh-CN': {
-                nav: { vehicles: '车辆展示', contact: '联系我们' },
-                hero: {
-                    btnBrowse: '浏览车辆', btnContact: '联系我们', btnWhatsapp: '💬 WhatsApp',
-                    statVehicles: '在售车辆', statSatisfaction: '客户满意', statExperience: '行业经验'
-                },
-                listings: {
-                    tag: '🚛 精选车源', title: '在售挂车展示', desc: '所有车辆均经过专业检测，车况真实描述，支持现场看车',
-                    filterAllTypes: '全部类型', filterAllYears: '全部年份', filterAllPrices: '全部价格',
-                    filterBefore2019: '2019年及以前',
-                    filterUnder5: '5万以下', filter5to10: '5-10万', filter10to15: '10-15万', filterOver15: '15万以上',
-                    filterSearch: '🔍 搜索车型或描述...', filterBtn: '筛选', filterReset: '重置',
-                    loading: '正在加载车辆数据...',
-                    emptyTitle: '没有找到匹配的车辆', emptyDesc: '试试调整筛选条件，或直接联系我们咨询更多车源'
-                },
-                contact: {
-                    sectionTitle: '联系我们', sectionDesc: '有任何问题或想看车，随时联系我们',
-                    title: '联系方式', desc: '我们承诺：所有车辆真实在售，价格透明，欢迎来电咨询或到店看车。',
-                    labelPhone: '联系电话', labelWechat: '微信', labelWhatsapp: 'WhatsApp', labelAddress: '地址',
-                    btnWechat: '📱 查看微信二维码', btnWhatsapp: '💬 WhatsApp',
-                    formTitle: '在线留言咨询', formName: '您的姓名', formPhone: '手机号码',
-                    formInterest: '感兴趣的类型', formMessage: '留言内容（选填）', formSubmit: '提交咨询',
-                    msgSent: '✅ 咨询已提交！我们将尽快与您联系。',
-                    msgFillInfo: '✅ 已填好咨询信息，请提交表单'
-                },
-                wechat: { title: '📱 扫码添加微信', desc: '长按识别或扫描下方二维码添加好友', close: '关闭' },
-                admin: {
-                    loginTitle: '⚙️ 管理后台', loginDesc: '请输入管理密码以编辑网站内容',
-                    loginError: '❌ 密码错误，请重试', loginBtn: '登录', loginCancel: '取消', loginUnlocked: '🔓 已进入管理模式',
-                    panelHint: '修改后点击保存更改按钮即可生效',
-                    tabCompany: '公司信息', tabVehicles: '车辆管理', tabQr: '二维码',
-                    labelCompany: '公司名称', labelSlogan: '公司标语', labelHeroTitle: 'Hero 标题', labelHeroDesc: 'Hero 描述',
-                    labelPhone: '联系电话', labelWechat: '微信 ID', labelWhatsapp: 'WhatsApp 号码',
-                    whatsappHelp: '只需数字，不要 + 号或空格', labelWhatsappDisplay: 'WhatsApp 显示文字', labelAddress: '地址',
-                    addVehicle: '＋ 添加新车', labelQr: '微信二维码图片', qrHint: '可以上传图片文件，或输入图片网址',
-                    qrUpload: '点击上传二维码图片', qrUrlPlaceholder: '或输入图片网址', clearQr: '清除图片',
-                    saveBtn: '💾 保存更改', closeBtn: '关闭管理后台', saved: '💾 所有更改已保存！',
-                    noVehicles: '暂无车辆，点击上方添加',
-                    veTitle: '编辑车辆', veLabelTitle: '车辆标题', veLabelType: '类型', veLabelYear: '年份',
-                    veLabelPrice: '价格（万元）', veLabelMileage: '里程', veLabelLocation: '位置', veLabelBadge: '标签',
-                    veLabelDesc: '描述', veLabelImage: '图片 URL（可选）',
-                    veSaveBtn: '保存车辆', veCancelBtn: '取消',
-                    veSaved: '✅ 车辆已保存', veDeleted: '🗑️ 车辆已删除',
-                    veRequired: '❌ 请填写车辆标题',
-                    veRequiredYear: '❌ 请填写年份和价格'
-                },
-                footer: '二手挂车交易平台',
-                toastAdminMode: '🔓 已进入管理模式'
-            },
-
-            'en': {
-                nav: { vehicles: 'Inventory', contact: 'Contact Us' },
-                hero: {
-                    btnBrowse: 'Browse Vehicles', btnContact: 'Contact Us', btnWhatsapp: '💬 WhatsApp',
-                    statVehicles: 'Vehicles', statSatisfaction: 'Satisfaction', statExperience: 'Experience'
-                },
-                listings: {
-                    tag: '🚛 Featured Trailers', title: 'Trailer Inventory', desc: 'All vehicles professionally inspected. Honest condition reports. On-site viewing available.',
-                    filterAllTypes: 'All Types', filterAllYears: 'All Years', filterAllPrices: 'All Prices',
-                    filterBefore2019: '2019 & Earlier',
-                    filterUnder5: 'Under ¥50k', filter5to10: '¥50k-100k', filter10to15: '¥100k-150k', filterOver15: '¥150k+',
-                    filterSearch: '🔍 Search model or description...', filterBtn: 'Filter', filterReset: 'Reset',
-                    loading: 'Loading vehicle data...',
-                    emptyTitle: 'No vehicles found', emptyDesc: 'Try adjusting filters or contact us for more options.'
-                },
-                contact: {
-                    sectionTitle: 'Contact Us', sectionDesc: 'Have questions or want to see a vehicle? Reach out anytime.',
-                    title: 'Get In Touch', desc: 'All vehicles listed are actually available with transparent pricing. Call or visit us.',
-                    labelPhone: 'Phone', labelWechat: 'WeChat', labelWhatsapp: 'WhatsApp', labelAddress: 'Address',
-                    btnWechat: '📱 View WeChat QR', btnWhatsapp: '💬 WhatsApp',
-                    formTitle: 'Send an Inquiry', formName: 'Your Name', formPhone: 'Phone Number',
-                    formInterest: 'Area of Interest', formMessage: 'Message (optional)', formSubmit: 'Submit Inquiry',
-                    msgSent: '✅ Inquiry submitted! We will contact you soon.',
-                    msgFillInfo: '✅ Info filled — please submit the form'
-                },
-                wechat: { title: '📱 Scan QR to Add WeChat', desc: 'Scan the QR code below to add us on WeChat', close: 'Close' },
-                admin: {
-                    loginTitle: '⚙️ Admin Panel', loginDesc: 'Enter password to edit website content',
-                    loginError: '❌ Wrong password, try again', loginBtn: 'Login', loginCancel: 'Cancel', loginUnlocked: '🔓 Admin mode activated',
-                    panelHint: 'Changes are saved to your browser\'s local storage',
-                    tabCompany: 'Company Info', tabVehicles: 'Vehicle Management', tabQr: 'QR Code',
-                    labelCompany: 'Company Name', labelSlogan: 'Slogan', labelHeroTitle: 'Hero Title', labelHeroDesc: 'Hero Description',
-                    labelPhone: 'Phone', labelWechat: 'WeChat ID', labelWhatsapp: 'WhatsApp Number',
-                    whatsappHelp: 'Numbers only, no + or spaces', labelWhatsappDisplay: 'WhatsApp Display', labelAddress: 'Address',
-                    addVehicle: '＋ Add Vehicle', labelQr: 'WeChat QR Image', qrHint: 'Upload an image file or paste an image URL',
-                    qrUpload: 'Click to upload QR code', qrUrlPlaceholder: 'Or paste image URL', clearQr: 'Clear Image',
-                    saveBtn: '💾 Save Changes', closeBtn: 'Close Admin Panel', saved: '💾 All changes saved!',
-                    noVehicles: 'No vehicles yet. Click above to add one.',
-                    veTitle: 'Edit Vehicle', veLabelTitle: 'Vehicle Title', veLabelType: 'Type', veLabelYear: 'Year',
-                    veLabelPrice: 'Price (¥10k)', veLabelMileage: 'Mileage', veLabelLocation: 'Location', veLabelBadge: 'Badge',
-                    veLabelDesc: 'Description', veLabelImage: 'Image URL (optional)',
-                    veSaveBtn: 'Save Vehicle', veCancelBtn: 'Cancel',
-                    veSaved: '✅ Vehicle saved', veDeleted: '🗑️ Vehicle deleted',
-                    veRequired: '❌ Please fill in vehicle title',
-                    veRequiredYear: '❌ Please fill in year and price'
-                },
-                footer: 'Used Trailer Trading Platform',
-                toastAdminMode: '🔓 Admin mode activated'
-            },
-
-            'ar': {
-                nav: { vehicles: 'عرض المركبات', contact: 'اتصل بنا' },
-                hero: {
-                    btnBrowse: 'تصفح المركبات', btnContact: 'اتصل بنا', btnWhatsapp: '💬 واتساب',
-                    statVehicles: 'مركبة', statSatisfaction: 'رضا العملاء', statExperience: 'خبرة'
-                },
-                listings: {
-                    tag: '🚛 مقطورات مميزة', title: 'المقطورات المعروضة', desc: 'جميع المركبات تخضع لفحص مهني، وصف دقيق للحالة، إمكانية المعاينة الميدانية.',
-                    filterAllTypes: 'جميع الأنواع', filterAllYears: 'جميع السنوات', filterAllPrices: 'جميع الأسعار',
-                    filterBefore2019: '2019 فما قبل',
-                    filterUnder5: 'أقل من ٥٠ ألف', filter5to10: '٥٠-١٠٠ ألف', filter10to15: '١٠٠-١٥٠ ألف', filterOver15: 'أكثر من ١٥٠ ألف',
-                    filterSearch: '🔍 بحث...', filterBtn: 'تصفية', filterReset: 'إعادة تعيين',
-                    loading: 'جاري تحميل البيانات...',
-                    emptyTitle: 'لا توجد نتائج', emptyDesc: 'حاول تعديل التصفية أو اتصل بنا لمزيد من الخيارات.'
-                },
-                contact: {
-                    sectionTitle: 'اتصل بنا', sectionDesc: 'لديك استفسار؟ تواصل معنا في أي وقت.',
-                    title: 'معلومات الاتصال', desc: 'جميع المركبات متوفرة فعلياً وبأسعار شفافة. اتصل أو زرنا.',
-                    labelPhone: 'الهاتف', labelWechat: 'وي تشات', labelWhatsapp: 'واتساب', labelAddress: 'العنوان',
-                    btnWechat: '📱 رمز وي تشات', btnWhatsapp: '💬 واتساب',
-                    formTitle: 'أرسل استفساراً', formName: 'الاسم', formPhone: 'رقم الهاتف',
-                    formInterest: 'نوع الاهتمام', formMessage: 'الرسالة (اختياري)', formSubmit: 'إرسال الاستفسار',
-                    msgSent: '✅ تم الإرسال! سنتواصل معك قريباً.',
-                    msgFillInfo: '✅ تم ملء المعلومات - يرجى إرسال النموذج'
-                },
-                wechat: { title: '📱 امسح الرمز لإضافة وي تشات', desc: 'امسح رمز الاستجابة السريعة لإضافتنا على وي تشات', close: 'إغلاق' },
-                admin: {
-                    loginTitle: '⚙️ لوحة التحكم', loginDesc: 'أدخل كلمة المرور لتعديل المحتوى',
-                    loginError: '❌ كلمة مرور خاطئة', loginBtn: 'دخول', loginCancel: 'إلغاء', loginUnlocked: '🔓 تم تفعيل وضع الإدارة',
-                    panelHint: 'يتم حفظ التغييرات في متصفحك',
-                    tabCompany: 'معلومات الشركة', tabVehicles: 'إدارة المركبات', tabQr: 'رمز QR',
-                    labelCompany: 'اسم الشركة', labelSlogan: 'الشعار', labelHeroTitle: 'عنوان الهيرو', labelHeroDesc: 'وصف الهيرو',
-                    labelPhone: 'الهاتف', labelWechat: 'معرف وي تشات', labelWhatsapp: 'رقم واتساب',
-                    whatsappHelp: 'أرقام فقط، بدون + أو مسافات', labelWhatsappDisplay: 'عرض واتساب', labelAddress: 'العنوان',
-                    addVehicle: '＋ إضافة مركبة', labelQr: 'صورة رمز وي تشات', qrHint: 'رفع صورة أو لصق رابط صورة',
-                    qrUpload: 'اضغط لرفع رمز QR', qrUrlPlaceholder: 'أو الصق رابط الصورة', clearQr: 'مسح الصورة',
-                    saveBtn: '💾 حفظ التغييرات', closeBtn: 'إغلاق لوحة التحكم', saved: '💾 تم حفظ جميع التغييرات!',
-                    noVehicles: 'لا توجد مركبات بعد. اضف واحدة بالأعلى.',
-                    veTitle: 'تعديل المركبة', veLabelTitle: 'عنوان المركبة', veLabelType: 'النوع', veLabelYear: 'السنة',
-                    veLabelPrice: 'السعر (بعدة ١٠ آلاف)', veLabelMileage: 'المسافة المقطوعة', veLabelLocation: 'الموقع', veLabelBadge: 'الوسم',
-                    veLabelDesc: 'الوصف', veLabelImage: 'رابط الصورة (اختياري)',
-                    veSaveBtn: 'حفظ المركبة', veCancelBtn: 'إلغاء',
-                    veSaved: '✅ تم حفظ المركبة', veDeleted: '🗑️ تم حذف المركبة',
-                    veRequired: '❌ يرجى إدخال عنوان المركبة',
-                    veRequiredYear: '❌ يرجى إدخال السنة والسعر'
-                },
-                footer: 'منصة تجارة المقطورات المستعملة',
-                toastAdminMode: '🔓 تم تفعيل وضع الإدارة'
-            },
-
-            'fa': {
-                nav: { vehicles: 'نمایش خودروها', contact: 'تماس با ما' },
-                hero: {
-                    btnBrowse: 'مشاهده خودروها', btnContact: 'تماس با ما', btnWhatsapp: '💬 واتساپ',
-                    statVehicles: 'خودرو', statSatisfaction: 'رضایت مشتری', statExperience: 'سال تجربه'
-                },
-                listings: {
-                    tag: '🚛 تریلرهای ویژه', title: 'تریلرهای موجود', desc: 'همه خودروها بازرسی حرفه‌ای شده‌اند. گزارش وضعیت واقعی. امکان بازدید حضوری.',
-                    filterAllTypes: 'همه انواع', filterAllYears: 'همه سال‌ها', filterAllPrices: 'همه قیمت‌ها',
-                    filterBefore2019: '۲۰۱۹ و قبل',
-                    filterUnder5: 'زیر ۵۰ هزار', filter5to10: '۵۰-۱۰۰ هزار', filter10to15: '۱۰۰-۱۵۰ هزار', filterOver15: 'بالای ۱۵۰ هزار',
-                    filterSearch: '🔍 جستجو...', filterBtn: 'فیلتر', filterReset: 'بازنشانی',
-                    loading: 'در حال بارگذاری...',
-                    emptyTitle: 'نتیجه‌ای یافت نشد', emptyDesc: 'فیلترها را تنظیم کنید یا با ما تماس بگیرید.'
-                },
-                contact: {
-                    sectionTitle: 'تماس با ما', sectionDesc: 'سوال دارید یا می‌خواهید خودرو را ببینید؟ تماس بگیرید.',
-                    title: 'اطلاعات تماس', desc: 'همه خودروها موجود با قیمت شفاف. تماس بگیرید یا بازدید کنید.',
-                    labelPhone: 'تلفن', labelWechat: 'وی‌چت', labelWhatsapp: 'واتساپ', labelAddress: 'آدرس',
-                    btnWechat: '📱 مشاهده QR وی‌چت', btnWhatsapp: '💬 واتساپ',
-                    formTitle: 'ارسال استعلام', formName: 'نام شما', formPhone: 'شماره تلفن',
-                    formInterest: 'نوع مورد علاقه', formMessage: 'پیام (اختیاری)', formSubmit: 'ارسال استعلام',
-                    msgSent: '✅ ارسال شد! به زودی با شما تماس می‌گیریم.',
-                    msgFillInfo: '✅ اطلاعات تکمیل شد - لطفاً فرم را ارسال کنید'
-                },
-                wechat: { title: '📱 اسکن کنید و وی‌چت اضافه کنید', desc: 'برای افزودن در وی‌چت، QR را اسکن کنید', close: 'بستن' },
-                admin: {
-                    loginTitle: '⚙️ پنل مدیریت', loginDesc: 'برای ویرایش محتوا رمز عبور را وارد کنید',
-                    loginError: '❌ رمز عبور اشتباه است', loginBtn: 'ورود', loginCancel: 'لغو', loginUnlocked: '🔓 حالت مدیریت فعال شد',
-                    panelHint: 'تغییرات در مرورگر شما ذخیره می‌شود',
-                    tabCompany: 'اطلاعات شرکت', tabVehicles: 'مدیریت خودروها', tabQr: 'QR کد',
-                    labelCompany: 'نام شرکت', labelSlogan: 'شعار', labelHeroTitle: 'عنوان هیرو', labelHeroDesc: 'توضیحات هیرو',
-                    labelPhone: 'تلفن', labelWechat: 'شناسه وی‌چت', labelWhatsapp: 'شماره واتساپ',
-                    whatsappHelp: 'فقط اعداد، بدون + یا فاصله', labelWhatsappDisplay: 'نمایش واتساپ', labelAddress: 'آدرس',
-                    addVehicle: '＋ افزودن خودرو', labelQr: 'تصویر QR وی‌چت', qrHint: 'آپلود تصویر یا چسباندن لینک',
-                    qrUpload: 'برای آپلود QR کلیک کنید', qrUrlPlaceholder: 'یا لینک تصویر را بچسبانید', clearQr: 'پاک کردن تصویر',
-                    saveBtn: '💬 ذخیره تغییرات', closeBtn: 'بستن پنل مدیریت', saved: '💾 همه تغییرات ذخیره شد!',
-                    noVehicles: 'خودرویی وجود ندارد. بالا یکی اضافه کنید.',
-                    veTitle: 'ویرایش خودرو', veLabelTitle: 'عنوان خودرو', veLabelType: 'نوع', veLabelYear: 'سال',
-                    veLabelPrice: 'قیمت (ده‌هزار)', veLabelMileage: 'مسافت', veLabelLocation: 'موقعیت', veLabelBadge: 'برچسب',
-                    veLabelDesc: 'توضیحات', veLabelImage: 'لینک تصویر (اختیاری)',
-                    veSaveBtn: 'ذخیره خودرو', veCancelBtn: 'لغو',
-                    veSaved: '✅ خودرو ذخیره شد', veDeleted: '🗑️ خودرو حذف شد',
-                    veRequired: '❌ لطفاً عنوان خودرو را وارد کنید',
-                    veRequiredYear: '❌ لطفاً سال و قیمت را وارد کنید'
-                },
-                footer: 'پلتفرم تجارت تریلر دست دوم',
-                toastAdminMode: '🔓 حالت مدیریت فعال شد'
-            },
-
-            'tr': {
-                nav: { vehicles: 'Araçlar', contact: 'İletişim' },
-                hero: {
-                    btnBrowse: 'Araçları Gör', btnContact: 'Bize Ulaşın', btnWhatsapp: '💬 WhatsApp',
-                    statVehicles: 'Araç', statSatisfaction: 'Memnuniyet', statExperience: 'Yıllık Tecrübe'
-                },
-                listings: {
-                    tag: '🚛 Öne Çıkan Treylerler', title: 'Treyler Envanteri', desc: 'Tüm araçlar profesyonelce incelenmiştir. Gerçek durum raporu. Yerinde inceleme mümkün.',
-                    filterAllTypes: 'Tüm Tipler', filterAllYears: 'Tüm Yıllar', filterAllPrices: 'Tüm Fiyatlar',
-                    filterBefore2019: '2019 ve Öncesi',
-                    filterUnder5: '50bin altı', filter5to10: '50-100bin', filter10to15: '100-150bin', filterOver15: '150bin+',
-                    filterSearch: '🔍 Model veya açıklama ara...', filterBtn: 'Filtrele', filterReset: 'Sıfırla',
-                    loading: 'Araç verileri yükleniyor...',
-                    emptyTitle: 'Araç bulunamadı', emptyDesc: 'Filtreleri değiştirin veya bizimle iletişime geçin.'
-                },
-                contact: {
-                    sectionTitle: 'İletişim', sectionDesc: 'Sorularınız mı var? Bizi arayın veya ziyaret edin.',
-                    title: 'Bize Ulaşın', desc: 'Tüm araçlar gerçekten satılıktır, şeffaf fiyatlandırma. Arayın veya gelin görün.',
-                    labelPhone: 'Telefon', labelWechat: 'WeChat', labelWhatsapp: 'WhatsApp', labelAddress: 'Adres',
-                    btnWechat: '📱 WeChat QR', btnWhatsapp: '💬 WhatsApp',
-                    formTitle: 'Sorgu Gönder', formName: 'Adınız', formPhone: 'Telefon Numarası',
-                    formInterest: 'İlgi Alanı', formMessage: 'Mesaj (isteğe bağlı)', formSubmit: 'Sorguyu Gönder',
-                    msgSent: '✅ Gönderildi! En kısa sürede sizi arayacağız.',
-                    msgFillInfo: '✅ Bilgiler dolduruldu - lütfen formu gönderin'
-                },
-                wechat: { title: '📱 WeChat Eklemek için Tara', desc: 'Bizi WeChat\'te eklemek için QR kodu tarayın', close: 'Kapat' },
-                admin: {
-                    loginTitle: '⚙️ Yönetim Paneli', loginDesc: 'İçeriği düzenlemek için şifreyi girin',
-                    loginError: '❌ Yanlış şifre', loginBtn: 'Giriş', loginCancel: 'İptal', loginUnlocked: '🔓 Yönetici modu aktif',
-                    panelHint: 'Değişiklikler tarayıcınıza kaydedilir',
-                    tabCompany: 'Şirket Bilgisi', tabVehicles: 'Araç Yönetimi', tabQr: 'QR Kod',
-                    labelCompany: 'Şirket Adı', labelSlogan: 'Slogan', labelHeroTitle: 'Hero Başlık', labelHeroDesc: 'Hero Açıklama',
-                    labelPhone: 'Telefon', labelWechat: 'WeChat ID', labelWhatsapp: 'WhatsApp Numarası',
-                    whatsappHelp: 'Sadece rakam, + veya boşluk yok', labelWhatsappDisplay: 'WhatsApp Görünen', labelAddress: 'Adres',
-                    addVehicle: '＋ Araç Ekle', labelQr: 'WeChat QR Görseli', qrHint: 'Dosya yükleyin veya URL yapıştırın',
-                    qrUpload: 'QR yüklemek için tıklayın', qrUrlPlaceholder: 'Veya URL yapıştırın', clearQr: 'Görseli Temizle',
-                    saveBtn: '💾 Değişiklikleri Kaydet', closeBtn: 'Paneli Kapat', saved: '💾 Tüm değişiklikler kaydedildi!',
-                    noVehicles: 'Henüz araç yok. Yukarıdan ekleyin.',
-                    veTitle: 'Aracı Düzenle', veLabelTitle: 'Araç Başlığı', veLabelType: 'Tip', veLabelYear: 'Yıl',
-                    veLabelPrice: 'Fiyat (onbin)', veLabelMileage: 'Kilometre', veLabelLocation: 'Konum', veLabelBadge: 'Rozet',
-                    veLabelDesc: 'Açıklama', veLabelImage: 'Görsel URL (isteğe bağlı)',
-                    veSaveBtn: 'Aracı Kaydet', veCancelBtn: 'İptal',
-                    veSaved: '✅ Araç kaydedildi', veDeleted: '🗑️ Araç silindi',
-                    veRequired: '❌ Lütfen araç başlığını girin',
-                    veRequiredYear: '❌ Lütfen yıl ve fiyatı girin'
-                },
-                footer: 'Kullanılmış Treyler Ticaret Platformu',
-                toastAdminMode: '🔓 Yönetici modu aktif'
-            },
-
-            'ku': {
-                nav: { vehicles: 'پیشاندانی ترێلەر', contact: 'پەیوەندیمان پێوەبکە' },
-                hero: {
-                    btnBrowse: 'بینینی ترێلەرەکان', btnContact: 'پەیوەندیمان پێوەبکە', btnWhatsapp: '💬 واتساپ',
-                    statVehicles: 'ترێلەر', statSatisfaction: 'ڕەزامەندی', statExperience: 'ساڵ ئەزموون'
-                },
-                listings: {
-                    tag: '🚛 ترێلەری هەڵبژێردراو', title: 'ترێلەرەکانی فرۆشتن', desc: 'هەموو ترێلەرەکان بە شێوەیەکی پیشەگەرانە پشکنینیان بۆ کراوە. ڕاپۆرتی ڕاستی. بینینی شوێن.',
-                    filterAllTypes: 'هەموو جۆرەکان', filterAllYears: 'هەموو ساڵەکان', filterAllPrices: 'هەموو نرخەکان',
-                    filterBefore2019: '۲۰۱۹ و پێشتر',
-                    filterUnder5: 'کەمتر لە ٥٠ هەزار', filter5to10: '٥٠-١٠٠ هەزار', filter10to15: '١٠٠-١٥٠ هەزار', filterOver15: 'زیاتر لە ١٥٠ هەزار',
-                    filterSearch: '🔍 گەڕان...', filterBtn: 'پاڵاوتن', filterReset: 'ڕێکخستنەوە',
-                    loading: 'بارکردنی زانیاری...',
-                    emptyTitle: 'هیچ ترێلەرێک نەدۆزرایەوە', emptyDesc: 'پاڵاوتەکان بگۆڕە یان پەیوەندیمان پێوەبکە.'
-                },
-                contact: {
-                    sectionTitle: 'پەیوەندیمان پێوەبکە', sectionDesc: 'پرسیار؟ بانگم بکە یان سەردانمان بکە.',
-                    title: 'زانیاری پەیوەندی', desc: 'هەموو ترێلەرەکان بەردەستن بە نرخی ڕاست. بانگم بکە یان وەرە سەردانمان بکە.',
-                    labelPhone: 'تەلەفۆن', labelWechat: 'ویچات', labelWhatsapp: 'واتساپ', labelAddress: 'ناونیشان',
-                    btnWechat: '📱 QR ویچات', btnWhatsapp: '💬 واتساپ',
-                    formTitle: 'پرسیار بنێرە', formName: 'ناوی تۆ', formPhone: 'ژمارەی تەلەفۆن',
-                    formInterest: 'جۆری بایەخ', formMessage: 'پەیام (ئارەزوو)', formSubmit: 'ناردنی پرسیار',
-                    msgSent: '✅ نێردرا! بەم زووانە پەیوەندیت پێوەدەکەین.',
-                    msgFillInfo: '✅ زانیاری پڕکرا - تکایە فۆرمەکە بنێرە'
-                },
-                wechat: { title: '📱 ویچات زیاد بکە', desc: 'بۆ زیادکردنی ویچات، QR کۆدەکە سکان بکە', close: 'داخستن' },
-                admin: {
-                    loginTitle: '⚙️ پانێلی بەڕێوەبردن', loginDesc: 'بۆ دەستکاری ناوەڕۆک، وشەی نهێنی بنووسە',
-                    loginError: '❌ وشەی نهێنی هەڵەیە', loginBtn: 'چوونەژوور', loginCancel: 'پاشگەزبوونەوە', loginUnlocked: '🔓 مۆدی بەڕێوەبردن چالاک کر',
-                    panelHint: 'گۆڕانکارییەکان لە وێبگەڕەکەتدا هەڵدەگیرێن',
-                    tabCompany: 'زانیاری کۆمپانیا', tabVehicles: 'بەڕێوەبردن', tabQr: 'QR کۆد',
-                    labelCompany: 'ناوی کۆمپانیا', labelSlogan: 'دروشم', labelHeroTitle: 'ناونیشانی هیرۆ', labelHeroDesc: 'وەسفی هیرۆ',
-                    labelPhone: 'تەلەفۆن', labelWechat: 'ID ویچات', labelWhatsapp: 'ژمارەی واتساپ',
-                    whatsappHelp: 'تەنها ژمارە، بێ + یان بۆشایی', labelWhatsappDisplay: 'پیشاندانی واتساپ', labelAddress: 'ناونیشان',
-                    addVehicle: '＋ ترێلەر زیاد بکە', labelQr: 'وێنەی QR ویچات', qrHint: 'وێنە بار بکە یان لینک دابنێ',
-                    qrUpload: 'بۆ بارکردنی QR کرتە بکە', qrUrlPlaceholder: 'یان لینکی وێنە دابنێ', clearQr: 'پاککردنەوەی وێنە',
-                    saveBtn: '💾 گۆڕانکارییەکان پاشەکەوت بکە', closeBtn: 'داخستنی پانێل', saved: '💾 هەموو گۆڕانکارییەکان پاشەکەوت کران!',
-                    noVehicles: 'هیچ ترێلەرێک نیە. لە سەرەوە زیاد بکە.',
-                    veTitle: 'دەستکاری ترێلەر', veLabelTitle: 'ناونیشان', veLabelType: 'جۆر', veLabelYear: 'ساڵ',
-                    veLabelPrice: 'نرخ (دە هەزاری)', veLabelMileage: 'مەودا', veLabelLocation: 'شوێن', veLabelBadge: 'بەج',
-                    veLabelDesc: 'وەسف', veLabelImage: 'لینکی وێنە (ئارەزوو)',
-                    veSaveBtn: 'پاشەکەوتکردن', veCancelBtn: 'پاشگەزبوونەوە',
-                    veSaved: '✅ ترێلەر پاشەکەوت کر', veDeleted: '🗑️ ترێلەر سڕایەوە',
-                    veRequired: '❌ تکایە ناونیشانی ترێلەر بنووسە',
-                    veRequiredYear: '❌ تکایە ساڵ و نرخ بنووسە'
-                },
-                footer: 'پلاتفۆرمی بازرگانی ترێلەری به‌کارهاتوو',
-                toastAdminMode: '🔓 مۆدی بەڕێوەبردن چالاک کر'
-            },
-
-            'ur': {
-                nav: { vehicles: 'گاڑیوں کی نمائش', contact: 'ہم سے رابطہ کریں' },
-                hero: {
-                    btnBrowse: 'گاڑیاں دیکھیں', btnContact: 'ہم سے رابطہ کریں', btnWhatsapp: '💬 واٹس ایپ',
-                    statVehicles: 'گاڑیاں', statSatisfaction: 'اطمینان', statExperience: 'سال کا تجربہ'
-                },
-                listings: {
-                    tag: '🚛 نمایاں ٹریلر', title: 'ٹریلر انوینٹری', desc: 'تمام گاڑیاں پیشہ ورانہ معائنہ شدہ۔ حقیقت پر مبنی حالت کی رپورٹ۔ سائٹ پر دیکھنے کی سہولت۔',
-                    filterAllTypes: 'تمام اقسام', filterAllYears: 'تمام سال', filterAllPrices: 'تمام قیمتیں',
-                    filterBefore2019: '2019 اور پہلے',
-                    filterUnder5: '50 ہزار سے کم', filter5to10: '50-100 ہزار', filter10to15: '100-150 ہزار', filterOver15: '150 ہزار سے اوپر',
-                    filterSearch: '🔍 ماڈل یا وضاحت تلاش کریں...', filterBtn: 'فلٹر', filterReset: 'ری سیٹ',
-                    loading: 'ڈیٹا لوڈ ہو رہا ہے...',
-                    emptyTitle: 'کوئی گاڑی نہیں ملی', emptyDesc: 'فلٹر تبدیل کریں یا مزید کے لیے ہم سے رابطہ کریں۔'
-                },
-                contact: {
-                    sectionTitle: 'ہم سے رابطہ کریں', sectionDesc: 'سوالات ہیں یا گاڑی دیکھنا چاہتے ہیں؟ ہم سے رابطہ کریں۔',
-                    title: 'رابطہ کی معلومات', desc: 'تمام گاڑیاں حقیقت میں موجود ہیں، شفاف قیمتیں۔ کال کریں یا آئیں۔',
-                    labelPhone: 'فون', labelWechat: 'وی چیٹ', labelWhatsapp: 'واٹس ایپ', labelAddress: 'پتہ',
-                    btnWechat: '📱 وی چیٹ QR', btnWhatsapp: '💬 واٹس ایپ',
-                    formTitle: 'انکوائری بھیجیں', formName: 'آپ کا نام', formPhone: 'فون نمبر',
-                    formInterest: 'دلچسپی کی قسم', formMessage: 'پیغام (اختیاری)', formSubmit: 'انکوائری بھیجیں',
-                    msgSent: '✅ بھیج دیا گیا! ہم جلد آپ سے رابطہ کریں گے۔',
-                    msgFillInfo: '✅ معلومات بھر دی گئیں - براہ کرم فارم جمع کروائیں'
-                },
-                wechat: { title: '📱 وی چیٹ شامل کرنے کے لیے اسکین کریں', desc: 'وی چیٹ پر شامل کرنے کے لیے QR کوڈ اسکین کریں', close: 'بند کریں' },
-                admin: {
-                    loginTitle: '⚙️ انتظامی پینل', loginDesc: 'مواد میں ترمیم کے لیے پاس ورڈ درج کریں',
-                    loginError: '❌ غلط پاس ورڈ', loginBtn: 'لاگ ان', loginCancel: 'منسوخ', loginUnlocked: '🔓 انتظامی موڈ فعال',
-                    panelHint: 'تبدیلیاں آپ کے براؤزر میں محفوظ ہوتی ہیں',
-                    tabCompany: 'کمپنی کی معلومات', tabVehicles: 'گاڑیوں کا انتظام', tabQr: 'QR کوڈ',
-                    labelCompany: 'کمپنی کا نام', labelSlogan: 'نعرہ', labelHeroTitle: 'ہیرو ٹائٹل', labelHeroDesc: 'ہیرو کی وضاحت',
-                    labelPhone: 'فون', labelWechat: 'وی چیٹ ID', labelWhatsapp: 'واٹس ایپ نمبر',
-                    whatsappHelp: 'صرف نمبر، + یا خلا کے بغیر', labelWhatsappDisplay: 'واٹس ایپ ڈسپلے', labelAddress: 'پتہ',
-                    addVehicle: '＋ گاڑی شامل کریں', labelQr: 'وی چیٹ QR تصویر', qrHint: 'تصویر اپ لوڈ کریں یا URL چسپاں کریں',
-                    qrUpload: 'QR اپ لوڈ کرنے کے لیے کلک کریں', qrUrlPlaceholder: 'یا تصویر کا URL چسپاں کریں', clearQr: 'تصویر صاف کریں',
-                    saveBtn: '💾 تبدیلیاں محفوظ کریں', closeBtn: 'پینل بند کریں', saved: '💾 تمام تبدیلیاں محفوظ!',
-                    noVehicles: 'ابھی تک کوئی گاڑی نہیں۔ اوپر سے شامل کریں۔',
-                    veTitle: 'گاڑی میں ترمیم کریں', veLabelTitle: 'گاڑی کا عنوان', veLabelType: 'قسم', veLabelYear: 'سال',
-                    veLabelPrice: 'قیمت (دس ہزار)', veLabelMileage: 'فاصلہ', veLabelLocation: 'مقام', veLabelBadge: 'بیج',
-                    veLabelDesc: 'وضاحت', veLabelImage: 'تصویر کا URL (اختیاری)',
-                    veSaveBtn: 'گاڑی محفوظ کریں', veCancelBtn: 'منسوخ',
-                    veSaved: '✅ گاڑی محفوظ ہو گئی', veDeleted: '🗑️ گاڑی حذف ہو گئی',
-                    veRequired: '❌ براہ کرم گاڑی کا عنوان درج کریں',
-                    veRequiredYear: '❌ براہ کرم سال اور قیمت درج کریں'
-                },
-                footer: 'استعمال شدہ ٹریلر تجارتی پلیٹ فارم',
-                toastAdminMode: '🔓 انتظامی موڈ فعال'
-            }
-        };
-
-        // ============================================================
-        //  i18n ENGINE
-        // ============================================================
-        let currentLang = 'zh-CN';
-
-        function getText(key) {
-            const keys = key.split('.');
-            let val = I18N[currentLang] || I18N['zh-CN'];
-            for (const k of keys) {
-                if (val && val[k] !== undefined) val = val[k];
-                else {
-                    // fallback to zh-CN
-                    val = I18N['zh-CN'];
-                    for (const kk of keys) {
-                        val = val ? val[kk] : undefined;
-                    }
-                    break;
-                }
-            }
-            return val !== undefined ? val : key;
-        }
-
-        function applyLanguage(langCode) {
-            const lang = LANGUAGES.find(l => l.code === langCode);
-            if (!lang) return;
-            currentLang = langCode;
-
-            // HTML lang & dir
-            document.documentElement.lang = langCode;
-            document.documentElement.dir = lang.dir;
-            document.body.classList.toggle('rtl', lang.dir === 'rtl');
-
-            // Site title
-            const co = document.getElementById('editCompanyName') || { value: '顺盈汽贸' };
-            const cname = co.value || '顺盈汽贸';
-            document.title = `${cname} - ${getText('footer')}`;
-
-            // Nav
-            setText('navVehicles', getText('nav.vehicles'));
-            setText('navContact', getText('nav.contact'));
-            document.getElementById('langCurrent').innerHTML = `🌐 ${lang.native}`;
-            renderLangDropdown();
-
-            // Hero
-            setText('heroBtnBrowse', getText('hero.btnBrowse'));
-            setText('heroBtnContact', getText('hero.btnContact'));
-            setText('hero.statVehiclesLabel', getText('hero.statVehicles'));
-            setText('statSatisfaction', getText('hero.statSatisfaction'));
-            setText('statExperience', getText('hero.statExperience'));
-
-            // Listings
-            setText('sectionTag', getText('listings.tag'));
-            setText('sectionTitle', getText('listings.title'));
-            setText('sectionDesc', getText('listings.desc'));
-            setText('filterAllTypes', getText('listings.filterAllTypes'));
-            setText('filterAllYears', getText('listings.filterAllYears'));
-            setText('filterAllPrices', getText('listings.filterAllPrices'));
-            setText('filterBefore2019', getText('listings.filterBefore2019'));
-            setText('filterUnder5', getText('listings.filterUnder5'));
-            setText('filter5to10', getText('listings.filter5to10'));
-            setText('filter10to15', getText('listings.filter10to15'));
-            setText('filterOver15', getText('listings.filterOver15'));
-            document.getElementById('filterSearch').placeholder = getText('listings.filterSearch');
-            setText('filterBtn', getText('listings.filterBtn'));
-            setText('filterReset', getText('listings.filterReset'));
-            setText('loadingText', getText('listings.loading'));
-            setText('emptyTitle', getText('listings.emptyTitle'));
-            setText('emptyDesc', getText('listings.emptyDesc'));
-
-            // Contact
-            setText('contactSectionTitle', getText('contact.sectionTitle'));
-            setText('contactSectionDesc', getText('contact.sectionDesc'));
-            setText('contactInfoTitle', getText('contact.title'));
-            setText('contactInfoDesc', getText('contact.desc'));
-            setText('contactLabelPhone', getText('contact.labelPhone'));
-            setText('contactLabelWechat', getText('contact.labelWechat'));
-            setText('contactLabelWhatsapp', getText('contact.labelWhatsapp'));
-            setText('contactLabelAddress', getText('contact.labelAddress'));
-            setText('contactBtnWechat', getText('contact.btnWechat'));
-            document.querySelectorAll('.whatsappMsgLabel').forEach(el => el.textContent = getText('contact.labelWhatsapp') === 'WhatsApp' ? 'Send message →' : getText('contact.labelWhatsapp') === 'واتساب' ? 'أرسل رسالة ←' : '');
-            setText('formTitle', getText('contact.formTitle'));
-            document.getElementById('formName').placeholder = getText('contact.formName');
-            document.getElementById('formPhone').placeholder = getText('contact.formPhone');
-            document.getElementById('formInterestPlaceholder').textContent = getText('contact.formInterest');
-            document.getElementById('formMessage').placeholder = getText('contact.formMessage');
-            setText('formSubmit', getText('contact.formSubmit'));
-
-            // WeChat modal
-            setText('wechatModalTitle', getText('wechat.title'));
-            setText('wechatModalDesc', getText('wechat.desc'));
-            setText('wechatModalClose', getText('wechat.close'));
-
-            // Footer
-            document.getElementById('footerText').innerHTML = `© 2026 ${cname} · ${getText('footer')} &nbsp;|&nbsp; ${getText('contact.labelPhone')}：<a href="tel:${(document.getElementById('editPhone') || {value:'13888888888'}).value.replace(/[^0-9]/g,'')}" id="footerPhone">${(document.getElementById('editPhone') || {value:'138-8888-8888'}).value}</a>`;
-
-            // Store preference
-            try { localStorage.setItem('shunying_lang', langCode); } catch(e) {}
-
-            // Close dropdown
-            document.getElementById('langDropdown').classList.remove('open');
-        }
-
-        function setText(id, text) {
-            const el = document.getElementById(id);
-            if (el) el.textContent = text;
-        }
-
-        function renderLangDropdown() {
-            const dd = document.getElementById('langDropdown');
-            dd.innerHTML = LANGUAGES.map(l => `
-                <button class="lang-option ${l.code === currentLang ? 'active' : ''}"
-                        onclick="applyLanguage('${l.code}')">
-                    <span class="native">${l.native}</span>
-                    <span class="name">${l.name}</span>
-                </button>
-            `).join('');
-        }
-
-        function toggleLangDropdown() {
-            document.getElementById('langDropdown').classList.toggle('open');
-        }
-
-        // Close dropdown on outside click
-        document.addEventListener('click', function(e) {
-            const dd = document.getElementById('langDropdown');
-            const btn = document.getElementById('langCurrent');
-            if (!btn.contains(e.target) && !dd.contains(e.target)) {
-                dd.classList.remove('open');
-            }
-        });
-
-        // ============================================================
-        //  DEFAULT DATA
-        // ============================================================
-        const DEFAULT_DATA = {
-            company: {
-                name: '顺盈汽贸', slogan: '二手挂车 · 专业交易平台',
-                heroTitle: '优质二手挂车 · <span>诚信交易</span>',
-                heroDesc: '专注二手挂车交易多年，每辆车均经过专业检测。价格透明，手续齐全，让您买得放心、用得安心。',
-                phone: '138-8888-8888', phoneRaw: '13888888888',
-                wechat: 'ShunYingTrailer',
-                whatsapp: '6281234567890', whatsappDisplay: '+62 812-3456-7890',
-                address: '山东省济宁市梁山县拳铺镇工业园'
-            },
-            qrImage: '',
-            vehicles: [
-                { id: 1, title: '2022年 13米平板挂车', type: '平板挂车', year: 2022, price: 6.8, mileage: '8万公里', location: '山东·梁山', desc: '2022年上牌，13米标箱平板挂车，富华桥，风神轮胎，车况精品，无事故，手续齐全，支持提档过户。', badge: '精品车况', badgeType: '', image: '' },
-                { id: 2, title: '2021年 9.6米厢式挂车', type: '厢式挂车', year: 2021, price: 5.2, mileage: '12万公里', location: '山东·梁山', desc: '2021年9.6米厢式货车，原版漆面，内饰干净整洁，发动机动力强劲，空调冰冷，到手零投资。', badge: '热销', badgeType: 'hot', image: '' },
-                { id: 3, title: '2023年 13.7米仓栅挂车', type: '仓栅挂车', year: 2023, price: 9.5, mileage: '3万公里', location: '山东·梁山', desc: '准新车状态，2023年上牌，13.7米仓栅挂车，加强型大梁，BPW桥，铝合金钢圈，可分期。', badge: '准新车', badgeType: '', image: '' },
-                { id: 4, title: '2020年 17.5米低平板挂车', type: '低平板挂车', year: 2020, price: 7.2, mileage: '15万公里', location: '山东·梁山', desc: '17.5米低平板，适合大件运输，加强型悬挂，轮胎成色好，无大修记录，价格可谈。', badge: '价格可谈', badgeType: '', image: '' },
-                { id: 5, title: '2022年 12.5米集装箱挂车', type: '集装箱挂车', year: 2022, price: 8.0, mileage: '6万公里', location: '山东·梁山', desc: '2022年12.5米集装箱骨架车，适合40尺集装箱，轻量化设计，保养仔细，随时看车。', badge: '热门推荐', badgeType: 'hot', image: '' },
-                { id: 6, title: '2019年 13米平板挂车', type: '平板挂车', year: 2019, price: 4.2, mileage: '20万公里', location: '山东·梁山', desc: '2019年13米平板，经济实惠，适合短途运输，轮胎刚换，发动机变速箱工况良好。', badge: '超值', badgeType: '', image: '' }
-            ]
-        };
-
-        // ============================================================
-        //  DATA LAYER
-        // ============================================================
-        const STORAGE_KEY = 'shunying_data';
-
-        function loadData() {
-            try {
-                const raw = localStorage.getItem(STORAGE_KEY);
-                if (raw) {
-                    const parsed = JSON.parse(raw);
-                    return deepMerge(clone(DEFAULT_DATA), parsed);
-                }
-            } catch (e) { console.warn('Data load failed', e); }
-            return clone(DEFAULT_DATA);
-        }
-
-        function saveData(data) {
-            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
-            catch (e) { console.error('Save failed', e); }
-        }
-
-        function clone(o) { return JSON.parse(JSON.stringify(o)); }
-
-        function deepMerge(target, source) {
-            const result = clone(target);
-            for (const key in source) {
-                if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-                    result[key] = deepMerge(result[key] || {}, source[key]);
-                } else {
-                    result[key] = source[key];
-                }
-            }
-            return result;
-        }
-
-        // ============================================================
-        //  STATE
-        // ============================================================
-        let appData = loadData();
-        let editingVehicleId = null;
-
-        const VEHICLE_ICONS = {
-            '平板挂车': '🛻', '仓栅挂车': '🚛', '厢式挂车': '🚚',
-            '低平板挂车': '🏗️', '集装箱挂车': '📦'
-        };
-        const PLACEHOLDER_COLORS = [
-            'linear-gradient(135deg, #667eea, #764ba2)',
-            'linear-gradient(135deg, #f093fb, #f5576c)',
-            'linear-gradient(135deg, #4facfe, #00f2fe)',
-            'linear-gradient(135deg, #43e97b, #38f9d7)',
-            'linear-gradient(135deg, #fa709a, #fee140)',
-            'linear-gradient(135deg, #a18cd1, #fbc2eb)'
-        ];
-
-        // ============================================================
-        //  RENDER
-        // ============================================================
-        function renderAll() {
-            const c = appData.company;
-            document.getElementById('logoDisplay').innerHTML = `🚛 ${c.name}<span id="logoSlogan">${c.slogan}</span>`;
-            document.getElementById('heroTitle').innerHTML = c.heroTitle;
-            document.getElementById('heroDesc').textContent = c.heroDesc;
-            document.getElementById('displayPhone').textContent = c.phone;
-            document.getElementById('displayWechat').textContent = c.wechat;
-            document.getElementById('displayWhatsapp').textContent = c.whatsappDisplay;
-            document.getElementById('displayAddress').textContent = c.address;
-            document.getElementById('footerPhone').textContent = c.phone;
-            document.getElementById('footerPhone').href = `tel:${c.phoneRaw}`;
-            document.getElementById('statVehicles').textContent = appData.vehicles.length + '+';
-
-            const waUrl = `https://wa.me/${c.whatsapp.replace(/[^0-9]/g, '')}`;
-            document.getElementById('heroWhatsappBtn').href = waUrl;
-            document.getElementById('whatsappLink').href = waUrl;
-            document.getElementById('whatsappBtnFooter').href = waUrl;
-
-            updateQrDisplay();
-            renderCards(appData.vehicles);
-
-            // Apply language after rendering content
-            const savedLang = localStorage.getItem('shunying_lang') || 'zh-CN';
-            applyLanguage(savedLang);
-        }
-
-        function renderCards(data) {
-            const grid = document.getElementById('trailerGrid');
-            const empty = document.getElementById('emptyState');
-
-            if (data.length === 0) {
-                grid.innerHTML = '';
-                empty.style.display = 'block';
-                return;
-            }
-            empty.style.display = 'none';
-
-            grid.innerHTML = data.map((t, idx) => {
-                const icon = VEHICLE_ICONS[t.type] || '🚛';
-                const bg = PLACEHOLDER_COLORS[idx % PLACEHOLDER_COLORS.length];
-                const badgeClass = t.badgeType ? `trailer-badge ${t.badgeType}` : 'trailer-badge';
-
-                return `
-                    <div class="trailer-card" onclick="contactAbout(${t.id})">
-                        <div class="trailer-img" style="background: ${bg};">
-                            ${t.image ? `<img src="${t.image}" alt="${t.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="placeholder-icon" style="display:none;">${icon}</div>` : `<div class="placeholder-icon">${icon}</div>`}
-                            <span class="${badgeClass}">${t.badge}</span>
-                        </div>
-                        <div class="admin-badge-actions">
-                            <button class="edit-btn" onclick="event.stopPropagation();editVehicle(${t.id})" title="Edit">✏️</button>
-                            <button class="del-btn" onclick="event.stopPropagation();deleteVehicle(${t.id})" title="Delete">✕</button>
-                        </div>
-                        <div class="trailer-body">
-                            <h3>${t.title}</h3>
-                            <div class="trailer-meta">
-                                <span><span class="icon">📅</span> ${t.year}</span>
-                                <span><span class="icon">📏</span> ${t.mileage}</span>
-                                <span><span class="icon">📍</span> ${t.location}</span>
-                                <span><span class="icon">🏷️</span> ${t.type}</span>
-                            </div>
-                            <div class="trailer-desc">${t.desc}</div>
-                            <div class="trailer-footer">
-                                <div class="trailer-price">¥${t.price}万</div>
-                                <button class="trailer-contact-btn" onclick="event.stopPropagation();contactAbout(${t.id})">💬</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function updateQrDisplay() {
-            const container = document.getElementById('qrContainer');
-            if (appData.qrImage) {
-                container.innerHTML = `<img src="${appData.qrImage}" alt="WeChat QR" style="width:100%;height:100%;object-fit:contain;">`;
-            } else {
-                container.innerHTML = `
-                    <div style="text-align: center;">
-                        <div style="font-size: 48px; margin-bottom: 8px;">💬</div>
-                        <div style="font-size:12px;">（${getText('wechat.desc')}）</div>
-                        <div style="font-size: 16px; font-weight: 600; color: #333; margin-top: 8px;">${appData.company.wechat}</div>
-                    </div>
-                `;
-            }
-        }
-
-        // ============================================================
-        //  FILTERS
-        // ============================================================
-        function applyFilters() {
-            const type = document.getElementById('filterType').value;
-            const year = document.getElementById('filterYear').value;
-            const price = document.getElementById('filterPrice').value;
-            const search = document.getElementById('filterSearch').value.toLowerCase().trim();
-
-            const filtered = appData.vehicles.filter(t => {
-                if (type !== 'all' && t.type !== type) return false;
-                if (year !== 'all') {
-                    if (year === '2019' && t.year > 2019) return false;
-                    if (year !== '2019' && t.year !== parseInt(year)) return false;
-                }
-                if (price !== 'all') {
-                    const [min, max] = price.split('-').map(Number);
-                    if (t.price < min || t.price > max) return false;
-                }
-                if (search && !t.title.toLowerCase().includes(search) && !t.desc.toLowerCase().includes(search)) return false;
-                return true;
-            });
-            renderCards(filtered);
-            document.getElementById('trailerGrid').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-
-        function resetFilters() {
-            document.getElementById('filterType').value = 'all';
-            document.getElementById('filterYear').value = 'all';
-            document.getElementById('filterPrice').value = 'all';
-            document.getElementById('filterSearch').value = '';
-            renderCards(appData.vehicles);
-        }
-
-        // ============================================================
-        //  CONTACT
-        // ============================================================
-        function contactAbout(id) {
-            const t = appData.vehicles.find(x => x.id === id);
-            if (t) {
-                document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
-                const textarea = document.querySelector('.contact-form textarea');
-                if (textarea) {
-                    textarea.value = getText('contact.msgFillInfo');
-                }
-                showToast(getText('contact.msgFillInfo'));
-            }
-        }
-
-        function showWechat() {
-            document.getElementById('wechatModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        function hideWechat() {
-            document.getElementById('wechatModal').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-        document.getElementById('wechatModal').addEventListener('click', function(e) {
-            if (e.target === this) hideWechat();
-        });
-
-        // ============================================================
-        //  FORM SUBMIT
-        // ============================================================
-        function handleSubmit(e) {
-            e.preventDefault();
-            const form = e.target;
-            const btn = form.querySelector('.submit-btn');
-            btn.textContent = '⏳ ...';
-            btn.disabled = true;
-            setTimeout(() => {
-                showToast(getText('contact.msgSent'));
-                btn.textContent = getText('contact.formSubmit');
-                btn.disabled = false;
-                form.reset();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }, 1200);
-        }
-
-        // ============================================================
-        //  ADMIN - LOGIN
-        // ============================================================
-        const ADMIN_PASSWORD = 'admin123';
-
-        function showAdminLogin() {
-            document.getElementById('adminLoginModal').classList.add('active');
-            document.getElementById('adminPwdInput').value = '';
-            document.getElementById('adminLoginError').style.display = 'none';
-            document.body.style.overflow = 'hidden';
-            setTimeout(() => document.getElementById('adminPwdInput').focus(), 200);
-        }
-        function hideAdminLogin() {
-            document.getElementById('adminLoginModal').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-        document.getElementById('adminLoginModal').addEventListener('click', function(e) {
-            if (e.target === this) hideAdminLogin();
-        });
-
-        function adminLogin() {
-            const pwd = document.getElementById('adminPwdInput').value;
-            if (pwd === ADMIN_PASSWORD) {
-                hideAdminLogin();
-                document.body.classList.add('admin-mode');
-                openAdminPanel();
-                showToast(getText('toastAdminMode'));
-            } else {
-                document.getElementById('adminLoginError').style.display = 'block';
-                document.getElementById('adminPwdInput').value = '';
-                document.getElementById('adminPwdInput').focus();
-            }
-        }
-
-        // Apply i18n to admin
-        function applyAdminLang() {
-            const t = (key) => getText('admin.' + key);
-            setText('adminLoginTitle', t('loginTitle'));
-            setText('adminLoginDesc', t('loginDesc'));
-            setText('adminLoginError', t('loginError'));
-            setText('adminLoginBtn', t('loginBtn'));
-            setText('adminLoginCancel', t('loginCancel'));
-            setText('adminPanelHint', t('panelHint'));
-            setText('adminTabCompany', t('tabCompany'));
-            setText('adminTabVehicles', t('tabVehicles'));
-            setText('adminTabQr', t('tabQr'));
-            setText('adminLabelCompany', t('labelCompany'));
-            setText('adminLabelSlogan', t('labelSlogan'));
-            setText('adminLabelHeroTitle', t('labelHeroTitle'));
-            setText('adminLabelHeroDesc', t('labelHeroDesc'));
-            setText('adminLabelPhone', t('labelPhone'));
-            setText('adminLabelWechat', t('labelWechat'));
-            setText('adminLabelWhatsapp', t('labelWhatsapp'));
-            setText('adminWhatsappHelp', t('whatsappHelp'));
-            setText('adminLabelWhatsappDisplay', t('labelWhatsappDisplay'));
-            setText('adminLabelAddress', t('labelAddress'));
-            setText('adminAddVehicle', t('addVehicle'));
-            setText('adminLabelQr', t('labelQr'));
-            setText('adminQrHint', t('qrHint'));
-            setText('qrUploadHint', t('qrUpload'));
-            document.getElementById('qrUrlInput').placeholder = t('qrUrlPlaceholder');
-            setText('adminClearQr', t('clearQr'));
-            setText('adminSaveBtn', t('saveBtn'));
-            setText('adminCloseBtn', t('closeBtn'));
-            document.getElementById('adminPwdInput').placeholder = t('loginDesc');
-            setText('vehicleEditTitle', t('veTitle'));
-            setText('veLabelTitle', t('veLabelTitle'));
-            setText('veLabelType', t('veLabelType'));
-            setText('veLabelYear', t('veLabelYear'));
-            setText('veLabelPrice', t('veLabelPrice'));
-            setText('veLabelMileage', t('veLabelMileage'));
-            setText('veLabelLocation', t('veLabelLocation'));
-            setText('veLabelBadge', t('veLabelBadge'));
-            setText('veLabelDesc', t('veLabelDesc'));
-            setText('veLabelImage', t('veLabelImage'));
-            setText('veSaveBtn', t('veSaveBtn'));
-            setText('veCancelBtn', t('veCancelBtn'));
-        }
-
-        // ============================================================
-        //  ADMIN - PANEL
-        // ============================================================
-        function openAdminPanel() {
-            const c = appData.company;
-            document.getElementById('editCompanyName').value = c.name;
-            document.getElementById('editSlogan').value = c.slogan;
-            document.getElementById('editHeroTitle').value = c.heroTitle.replace(/<[^>]*>/g, '');
-            document.getElementById('editHeroDesc').value = c.heroDesc;
-            document.getElementById('editPhone').value = c.phone;
-            document.getElementById('editWechat').value = c.wechat;
-            document.getElementById('editWhatsapp').value = c.whatsapp;
-            document.getElementById('editWhatsappDisplay').value = c.whatsappDisplay;
-            document.getElementById('editAddress').value = c.address;
-
-            updateQrPreview();
-            renderVehicleList();
-            switchAdminTab('tabCompany');
-            applyAdminLang();
-
-            document.getElementById('adminPanelModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function hideAdminPanel() {
-            document.getElementById('adminPanelModal').classList.remove('active');
-            document.body.style.overflow = '';
-            document.body.classList.remove('admin-mode');
-        }
-        document.getElementById('adminPanelModal').addEventListener('click', function(e) {
-            if (e.target === this) hideAdminPanel();
-        });
-
-        function switchAdminTab(tabId) {
-            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
-            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
-            document.getElementById(tabId).classList.add('active');
-        }
-
-        // ============================================================
-        //  ADMIN - QR
-        // ============================================================
-        function handleQrFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('qrPreviewImg').src = e.target.result;
-                document.getElementById('qrPreviewImg').style.display = 'block';
-                document.getElementById('qrUploadHint').textContent = '✅ ' + (getText('admin.qrUpload') || 'Image loaded');
-                document.getElementById('qrUrlInput').value = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function updateQrPreview() {
-            const preview = document.getElementById('qrPreviewImg');
-            const hint = document.getElementById('qrUploadHint');
-            const urlInput = document.getElementById('qrUrlInput');
-            urlInput.value = appData.qrImage || '';
-            if (appData.qrImage) {
-                preview.src = appData.qrImage;
-                preview.style.display = 'block';
-                hint.textContent = '✅ ' + (getText('admin.qrUpload') || 'QR loaded');
-            } else {
-                preview.style.display = 'none';
-                hint.textContent = getText('admin.qrUpload') || 'Click to upload QR';
-            }
-        }
-
-        function clearQrImage() {
-            document.getElementById('qrPreviewImg').style.display = 'none';
-            document.getElementById('qrUploadHint').textContent = getText('admin.qrUpload') || 'Click to upload QR';
-            document.getElementById('qrUrlInput').value = '';
-            document.getElementById('qrFileInput').value = '';
-        }
-
-        // ============================================================
-        //  ADMIN - VEHICLE LIST
-        // ============================================================
-        function renderVehicleList() {
-            const list = document.getElementById('vehicleList');
-            if (appData.vehicles.length === 0) {
-                list.innerHTML = '<p style="text-align:center;color:#999;padding:20px;">' + getText('admin.noVehicles') + '</p>';
-                return;
-            }
-            list.innerHTML = appData.vehicles.map(v => `
-                <div class="admin-vehicle-item">
-                    <div class="vinfo">
-                        <div class="vtitle">${v.title}</div>
-                        <div class="vmeta">${v.type} · ${v.year} · ¥${v.price}万</div>
-                    </div>
-                    <button class="vedit" onclick="editVehicle(${v.id})">${getText('admin.veSaveBtn').replace('💾 ','') || 'Edit'}</button>
-                    <button class="vdel" onclick="deleteVehicle(${v.id})">${getText('admin.veCancelBtn') || 'Del'}</button>
-                </div>
-            `).join('');
-        }
-
-        function addNewVehicle() {
-            editingVehicleId = null;
-            document.getElementById('vehicleEditTitle').textContent = getText('admin.veTitle').replace('编辑车辆','').replace('Edit Vehicle','') || '添加新车';
-            document.getElementById('veId').value = '';
-            document.getElementById('veTitle').value = '';
-            document.getElementById('veType').value = '平板挂车';
-            document.getElementById('veYear').value = new Date().getFullYear();
-            document.getElementById('vePrice').value = '';
-            document.getElementById('veMileage').value = '';
-            document.getElementById('veLocation').value = '山东·梁山';
-            document.getElementById('veBadge').value = '';
-            document.getElementById('veDesc').value = '';
-            document.getElementById('veImage').value = '';
-            document.getElementById('vehicleEditModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function editVehicle(id) {
-            const v = appData.vehicles.find(x => x.id === id);
-            if (!v) return;
-            editingVehicleId = id;
-            document.getElementById('vehicleEditTitle').textContent = getText('admin.veTitle');
-            document.getElementById('veId').value = id;
-            document.getElementById('veTitle').value = v.title;
-            document.getElementById('veType').value = v.type;
-            document.getElementById('veYear').value = v.year;
-            document.getElementById('vePrice').value = v.price;
-            document.getElementById('veMileage').value = v.mileage;
-            document.getElementById('veLocation').value = v.location;
-            document.getElementById('veBadge').value = v.badge;
-            document.getElementById('veDesc').value = v.desc;
-            document.getElementById('veImage').value = v.image || '';
-            document.getElementById('vehicleEditModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function hideVehicleEdit() {
-            document.getElementById('vehicleEditModal').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-        document.getElementById('vehicleEditModal').addEventListener('click', function(e) {
-            if (e.target === this) hideVehicleEdit();
-        });
-
-        function saveVehicle() {
-            const title = document.getElementById('veTitle').value.trim();
-            const type = document.getElementById('veType').value;
-            const year = parseInt(document.getElementById('veYear').value);
-            const price = parseFloat(document.getElementById('vePrice').value);
-            const mileage = document.getElementById('veMileage').value.trim();
-            const location = document.getElementById('veLocation').value.trim();
-            const badge = document.getElementById('veBadge').value.trim() || '在售';
-            const desc = document.getElementById('veDesc').value.trim();
-            const image = document.getElementById('veImage').value.trim();
-
-            if (!title) { showToast(getText('admin.veRequired'), true); return; }
-            if (!year || !price) { showToast(getText('admin.veRequiredYear'), true); return; }
-
-            const id = editingVehicleId || Date.now();
-            const vehicle = { id, title, type, year, price, mileage, location, desc, badge, badgeType: '', image };
-
-            if (editingVehicleId) {
-                const idx = appData.vehicles.findIndex(v => v.id === editingVehicleId);
-                if (idx !== -1) appData.vehicles[idx] = vehicle;
-            } else {
-                appData.vehicles.push(vehicle);
-            }
-
-            saveData(appData);
-            hideVehicleEdit();
-            renderVehicleList();
-            renderCards(appData.vehicles);
-            document.getElementById('statVehicles').textContent = appData.vehicles.length + '+';
-            showToast(getText('admin.veSaved'));
-        }
-
-        function deleteVehicle(id) {
-            if (!confirm('确定删除？')) return;
-            appData.vehicles = appData.vehicles.filter(v => v.id !== id);
-            saveData(appData);
-            renderVehicleList();
-            renderCards(appData.vehicles);
-            document.getElementById('statVehicles').textContent = appData.vehicles.length + '+';
-            showToast(getText('admin.veDeleted'));
-        }
-
-        // ============================================================
-        //  ADMIN - SAVE ALL
-        // ============================================================
-        function saveAdminChanges() {
-            const c = appData.company;
-            c.name = document.getElementById('editCompanyName').value.trim() || '顺盈汽贸';
-            c.slogan = document.getElementById('editSlogan').value.trim() || '二手挂车 · 专业交易平台';
-            const heroRaw = document.getElementById('editHeroTitle').value.trim();
-            c.heroTitle = heroRaw || '优质二手挂车 · 诚信交易';
-            c.heroDesc = document.getElementById('editHeroDesc').value.trim() || c.heroDesc;
-            c.phone = document.getElementById('editPhone').value.trim() || c.phone;
-            c.phoneRaw = c.phone.replace(/[^0-9]/g, '');
-            c.wechat = document.getElementById('editWechat').value.trim() || c.wechat;
-            c.whatsapp = document.getElementById('editWhatsapp').value.trim() || c.whatsapp;
-            c.whatsappDisplay = document.getElementById('editWhatsappDisplay').value.trim() || c.whatsappDisplay;
-            c.address = document.getElementById('editAddress').value.trim() || c.address;
-
-            const qrUrl = document.getElementById('qrUrlInput').value.trim();
-            appData.qrImage = qrUrl || '';
-
-            saveData(appData);
-            renderAll();
-            hideAdminPanel();
-            showToast(getText('admin.saved'));
-            document.body.classList.remove('admin-mode');
-        }
-
-        // ============================================================
-        //  TOAST
-        // ============================================================
-        function showToast(msg, isError) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.className = 'toast' + (isError ? ' error' : '');
-            toast.classList.add('show');
-            clearTimeout(toast._timer);
-            toast._timer = setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        // ============================================================
-        //  MOBILE MENU
-        // ============================================================
-        document.getElementById('menuToggle').addEventListener('click', function() {
-            document.getElementById('navLinks').classList.toggle('open');
-        });
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                document.getElementById('navLinks').classList.remove('open');
-            });
-        });
-
-        // ============================================================
-        //  SCROLL TOP
-        // ============================================================
-        window.addEventListener('scroll', function() {
-            const btn = document.getElementById('scrollTop');
-            btn.classList.toggle('visible', window.scrollY > 400);
-        });
-
-        // ============================================================
-        //  KEYBOARD
-        // ============================================================
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                hideWechat(); hideAdminLogin(); hideAdminPanel(); hideVehicleEdit();
-            }
-        });
-
-        // ============================================================
-        //  INIT
-        // ============================================================
-        document.addEventListener('DOMContentLoaded', function() {
-            renderLangDropdown();
-            const loading = document.getElementById('loading');
-            loading.style.display = 'block';
-            setTimeout(() => {
-                loading.style.display = 'none';
-                renderAll();
-            }, 500);
-        });
-
-        // Also update whatsapp link label per language
-        document.querySelectorAll('.whatsappMsgLabel').forEach(el => {});
-    </script>
+<header>
+<nav class="container">
+<a href="#" class="logo" id="logoDisplay">🚛 顺盈汽贸<span id="logoSlogan">二手挂车 · 专业交易平台</span></a>
+<button class="menu-toggle" id="menuToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+<ul class="nav-links" id="navLinks">
+<li><a href="#listings" id="navVehicles">车辆展示</a></li>
+<li><a href="#contact" id="navContact">联系我们</a></li>
+<li><div class="lang-switcher"><button class="lang-current" id="langCurrent" onclick="toggleLangDropdown()">🌐 中文</button><div class="lang-dropdown" id="langDropdown"></div></div></li>
+<li><button class="admin-entry" id="adminEntryBtn" onclick="showAdminLogin()">⚙️</button></li>
+</ul>
+</nav>
+</header>
+
+<section class="hero">
+<div class="container">
+<h1 id="heroTitle">优质二手挂车 · <span>诚信交易</span></h1>
+<p id="heroDesc">专注二手挂车交易多年，每辆车均经过专业检测。价格透明，手续齐全，让您买得放心、用得安心。</p>
+<div class="hero-btns">
+<a href="#listings" class="btn btn-primary" id="heroBtnBrowse">浏览车辆</a>
+<a href="#contact" class="btn btn-outline" id="heroBtnContact">联系我们</a>
+<a href="#" id="heroWhatsappBtn" class="btn btn-whatsapp" target="_blank" style="display:inline-flex;align-items:center;gap:6px;">💬 WhatsApp</a>
+</div>
+<div class="hero-stats">
+<div class="hero-stat"><div class="num" id="statVehicles">50+</div><div class="label" id="statVehiclesLabel">在售车辆</div></div>
+<div class="hero-stat"><div class="num">98%</div><div class="label" id="statSatisfaction">客户满意</div></div>
+<div class="hero-stat"><div class="num">5年+</div><div class="label" id="statExperience">行业经验</div></div>
+</div>
+</div>
+</section>
+
+<section class="section" id="listings">
+<div class="container">
+<div class="section-title">
+<span class="tag" id="sectionTag">🚛 精选车源</span>
+<h2 id="sectionTitle">在售挂车展示</h2>
+<p id="sectionDesc">所有车辆均经过专业检测，车况真实描述，支持现场看车</p>
+</div>
+<div class="filter-bar">
+<select id="filterType"><option value="all" id="filterAllTypes">全部类型</option><option value="平板挂车">平板挂车</option><option value="仓栅挂车">仓栅挂车</option><option value="厢式挂车">厢式挂车</option><option value="低平板挂车">低平板挂车</option><option value="集装箱挂车">集装箱挂车</option></select>
+<select id="filterYear"><option value="all" id="filterAllYears">全部年份</option><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option><option value="2019" id="filterBefore2019">2019年及以前</option></select>
+<select id="filterPrice"><option value="all" id="filterAllPrices">全部价格</option><option value="0-5" id="filterUnder5">5万以下</option><option value="5-10" id="filter5to10">5-10万</option><option value="10-15" id="filter10to15">10-15万</option><option value="15-999" id="filterOver15">15万以上</option></select>
+<input type="text" id="filterSearch" placeholder="🔍 搜索车型或描述...">
+<button class="filter-btn" onclick="applyFilters()" id="filterBtn">筛选</button>
+<button class="filter-reset" onclick="resetFilters()" id="filterReset">重置</button>
+</div>
+<div class="loading-spinner" id="loading"><div class="spinner"></div><p id="loadingText">正在加载车辆数据...</p></div>
+<div class="trailer-grid" id="trailerGrid"></div>
+<div class="empty-state" id="emptyState"><div class="icon">🔍</div><h3 id="emptyTitle">没有找到匹配的车辆</h3><p id="emptyDesc">试试调整筛选条件，或直接联系我们咨询更多车源</p></div>
+</div>
+</section>
+
+<section class="section contact-section" id="contact">
+<div class="container">
+<div class="section-title">
+<span class="tag" style="background:rgba(231,76,60,.2)">💬</span>
+<h2 style="color:#fff" id="contactSectionTitle">联系我们</h2>
+<p style="color:rgba(255,255,255,.6)" id="contactSectionDesc">有任何问题或想看车，随时联系我们</p>
+</div>
+<div class="contact-grid">
+<div class="contact-info">
+<h3 id="contactInfoTitle">联系方式</h3>
+<p id="contactInfoDesc">我们承诺：所有车辆真实在售，价格透明，欢迎来电咨询或到店看车。</p>
+<div class="contact-item"><div class="contact-icon">📞</div><div><div class="label" id="contactLabelPhone">联系电话</div><div class="value highlight" id="displayPhone">138-8888-8888</div></div></div>
+<div class="contact-item"><div class="contact-icon">💬</div><div><div class="label" id="contactLabelWechat">微信</div><div class="value" id="displayWechat">ShunYingTrailer</div></div></div>
+<div class="contact-item"><div class="contact-icon whatsapp">📱</div><div><div class="label" id="contactLabelWhatsapp">WhatsApp</div><div class="value whatsapp" id="displayWhatsapp">+62 812-3456-7890</div><a href="#" id="whatsappLink" target="_blank" style="font-size:12px;color:#25D366">发消息 →</a></div></div>
+<div class="contact-item"><div class="contact-icon">📍</div><div><div class="label" id="contactLabelAddress">地址</div><div class="value" id="displayAddress">山东省济宁市梁山县拳铺镇工业园</div></div></div>
+<div class="contact-btns"><button class="btn btn-primary" onclick="showWechat()" id="contactBtnWechat">📱 查看微信二维码</button><a href="#" id="whatsappBtnFooter" class="btn btn-whatsapp" target="_blank" style="display:inline-flex;align-items:center;gap:6px">💬 WhatsApp</a></div>
+</div>
+<div class="contact-form">
+<h4 id="formTitle">在线留言咨询</h4>
+<form id="contactForm" onsubmit="handleSubmit(event)">
+<div class="form-group"><input type="text" id="formName" placeholder="您的姓名" required></div>
+<div class="form-group"><input type="tel" id="formPhone" placeholder="手机号码" required></div>
+<div class="form-group"><select id="formInterest"><option value="" id="formInterestPlaceholder">感兴趣的类型</option><option>平板挂车</option><option>仓栅挂车</option><option>厢式挂车</option><option>低平板挂车</option><option>集装箱挂车</option></select></div>
+<div class="form-group"><textarea id="formMessage" placeholder="留言内容（选填）"></textarea></div>
+<button type="submit" class="submit-btn" id="formSubmit">提交咨询</button>
+</form>
+</div>
+</div>
+</div>
+</section>
+
+<footer>
+<div class="container">
+<p id="footerText">© 2026 顺盈汽贸 · 二手挂车交易平台 &nbsp;|&nbsp; 电话：<a href="tel:13888888888" id="footerPhone">138-8888-8888</a></p>
+<p style="margin-top:8px;font-size:12px" id="footerAddr">山东省济宁市梁山县 · 专注二手挂车交易</p>
+</div>
+</footer>
+
+<!-- Modals -->
+<div class="modal-overlay" id="wechatModal"><div class="modal-box"><h3 id="wechatModalTitle">📱 扫码添加微信</h3><p id="wechatModalDesc">长按识别或扫描下方二维码添加好友</p><div class="modal-qr" id="qrContainer"><div style="text-align:center"><div style="font-size:48px;margin-bottom:8px">💬</div><div id="qrPlaceholderText" style="font-size:12px">（请上传微信二维码图片）</div><div style="font-size:16px;font-weight:600;color:#333;margin-top:8px" id="qrWechatId">ShunYingTrailer</div></div></div><button class="modal-close" id="wechatModalClose" onclick="hideWechat()">关闭</button></div></div>
+
+<!-- Vehicle Detail Modal -->
+<div class="modal-overlay detail-modal" id="detailModal">
+<div class="modal-box">
+<button class="detail-close" onclick="closeDetail()">✕</button>
+<div class="detail-carousel" id="detailCarousel">
+<button class="carousel-btn carousel-prev" onclick="carouselPrev()">‹</button>
+<button class="carousel-btn carousel-next" onclick="carouselNext()">›</button>
+<div class="carousel-dots" id="carouselDots"></div>
+</div>
+<div class="detail-thumbs" id="detailThumbs"></div>
+<div class="detail-info">
+<h2 id="detailTitle"></h2>
+<div class="detail-meta" id="detailMeta"></div>
+<div class="detail-price" id="detailPrice"></div>
+<div class="detail-desc" id="detailDesc"></div>
+<div class="detail-actions" id="detailActions"></div>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="adminLoginModal"><div class="modal-box" style="max-width:360px"><h3 id="adminLoginTitle">⚙️ 管理后台</h3><p id="adminLoginDesc">请输入管理密码以编辑网站内容</p><input type="password" class="admin-login-input" id="adminPwdInput" placeholder="" onkeydown="if(event.key==='Enter') adminLogin()"><div class="admin-login-error" id="adminLoginError">❌ 密码错误，请重试</div><button class="btn btn-primary" onclick="adminLogin()" style="width:100%" id="adminLoginBtn">登录</button><button class="modal-close" onclick="hideAdminLogin()" style="margin-top:12px;width:100%" id="adminLoginCancel">取消</button></div></div>
+
+<div class="modal-overlay admin-modal" id="adminPanelModal">
+<div class="modal-box">
+<h3>⚙️</h3><p style="text-align:center;color:#888;font-size:13px" id="adminPanelHint">修改后点击保存更改按钮即可生效</p>
+<div class="admin-tabs">
+<button class="admin-tab active" data-tab="tabCompany" onclick="switchAdminTab('tabCompany')" id="adminTabCompany">公司信息</button>
+<button class="admin-tab" data-tab="tabVehicles" onclick="switchAdminTab('tabVehicles')" id="adminTabVehicles">车辆管理</button>
+<button class="admin-tab" data-tab="tabQr" onclick="switchAdminTab('tabQr')" id="adminTabQr">二维码</button>
+</div>
+<div class="admin-panel active" id="tabCompany">
+<label id="adminLabelCompany">公司名称</label><input type="text" id="editCompanyName">
+<label id="adminLabelSlogan">公司标语</label><input type="text" id="editSlogan">
+<label id="adminLabelHeroTitle">Hero 标题</label><input type="text" id="editHeroTitle">
+<label id="adminLabelHeroDesc">Hero 描述</label><textarea id="editHeroDesc" rows="2"></textarea>
+<div class="form-row"><div><label id="adminLabelPhone">联系电话</label><input type="text" id="editPhone"></div><div><label id="adminLabelWechat">微信 ID</label><input type="text" id="editWechat"></div></div>
+<div class="form-row"><div><label id="adminLabelWhatsapp">WhatsApp 号码</label><input type="text" id="editWhatsapp" placeholder="628123456789"><div class="help-text" id="adminWhatsappHelp">只需数字，不要 + 号或空格</div></div><div><label id="adminLabelWhatsappDisplay">WhatsApp 显示文字</label><input type="text" id="editWhatsappDisplay"></div></div>
+<label id="adminLabelAddress">地址</label><input type="text" id="editAddress">
+</div>
+<div class="admin-panel" id="tabVehicles">
+<button class="add-vehicle-btn" onclick="addNewVehicle()" id="adminAddVehicle">＋ 添加新车</button>
+<div id="vehicleList"></div>
+</div>
+<div class="admin-panel" id="tabQr">
+<label id="adminLabelQr">微信二维码图片</label><p style="font-size:12px;color:#999;margin-bottom:8px" id="adminQrHint">可以上传图片文件，或输入图片网址</p>
+<div class="file-upload-area" id="qrUploadArea" onclick="document.getElementById('qrFileInput').click()"><img id="qrPreviewImg" class="preview-img" style="display:none" alt="QR"><div class="hint" id="qrUploadHint">点击上传二维码图片</div><input type="file" id="qrFileInput" accept="image/*" onchange="handleQrFile(event)"><input type="text" id="qrUrlInput" placeholder="或输入图片网址" onclick="event.stopPropagation()"></div>
+<div style="margin-top:8px"><button class="btn" style="background:#eee;color:#666;padding:6px 16px;font-size:12px" onclick="clearQrImage()" id="adminClearQr">清除图片</button></div>
+</div>
+<button class="admin-save-btn" onclick="saveAdminChanges()" id="adminSaveBtn">💾 保存更改</button>
+<button class="modal-close" onclick="hideAdminPanel()" style="width:100%;margin-top:12px" id="adminCloseBtn">关闭管理后台</button>
+</div>
+</div>
+
+<!-- Vehicle Edit Modal (with multi-image) -->
+<div class="modal-overlay" id="vehicleEditModal">
+<div class="modal-box" style="max-width:650px;text-align:left">
+<h3 style="text-align:center" id="vehicleEditTitle">编辑车辆</h3>
+<input type="hidden" id="veId">
+<label id="veLabelTitle">车辆标题</label><input type="text" id="veTitle">
+<div class="form-row"><div><label id="veLabelType">类型</label><select id="veType"><option>平板挂车</option><option>仓栅挂车</option><option>厢式挂车</option><option>低平板挂车</option><option>集装箱挂车</option></select></div><div><label id="veLabelYear">年份</label><input type="number" id="veYear" min="2000" max="2030"></div></div>
+<div class="form-row"><div><label id="veLabelPrice">价格（万元）</label><input type="number" id="vePrice" step="0.1"></div><div><label id="veLabelMileage">里程</label><input type="text" id="veMileage" placeholder="如 8万公里"></div></div>
+<div class="form-row"><div><label id="veLabelLocation">位置</label><input type="text" id="veLocation" placeholder="山东·梁山"></div><div><label id="veLabelBadge">标签</label><input type="text" id="veBadge" placeholder="精品车况"></div></div>
+<label id="veLabelDesc">描述</label><textarea id="veDesc" rows="3"></textarea>
+
+<!-- Multi-image upload -->
+<label id="veLabelImages">车辆图片 <span style="font-weight:400;color:#999;font-size:12px">（可添加多张，第一张为封面）</span></label>
+<div class="img-upload-list" id="imageUploadList"></div>
+<div class="img-upload-url-row">
+<input type="text" id="veImageUrlInput" placeholder="输入图片网址，按回车添加" onkeydown="if(event.key==='Enter'){addImageUrl();event.preventDefault()}">
+<button onclick="addImageUrl()" id="veAddUrlBtn">添加</button>
+</div>
+<div style="margin-top:8px">
+<button class="btn" style="background:#f0f0f0;color:#666;padding:8px 16px;font-size:13px" onclick="document.getElementById('veFileInput').click()">📷 从手机/电脑上传图片</button>
+<input type="file" id="veFileInput" accept="image/*" multiple style="display:none" onchange="handleVehicleFiles(event)">
+</div>
+
+<div style="display:flex;gap:12px;margin-top:20px">
+<button class="btn btn-primary" onclick="saveVehicle()" style="flex:1" id="veSaveBtn">保存车辆</button>
+<button class="modal-close" onclick="hideVehicleEdit()" style="flex:1" id="veCancelBtn">取消</button>
+</div>
+</div>
+</div>
+
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== i18n DATA =====
+const LANGUAGES = [
+{code:'zh-CN',native:'中文',name:'Chinese',dir:'ltr'},
+{code:'en',native:'English',name:'English',dir:'ltr'},
+{code:'ar',native:'العربية',name:'Arabic',dir:'rtl'},
+{code:'fa',native:'فارسی',name:'Persian',dir:'rtl'},
+{code:'tr',native:'Türkçe',name:'Turkish',dir:'ltr'},
+{code:'ku',native:'کوردی',name:'Kurdish',dir:'rtl'},
+{code:'ur',native:'اردو',name:'Urdu',dir:'rtl'}
+];
+const I18N={'zh-CN':{
+nav:{vehicles:'车辆展示',contact:'联系我们'},
+hero:{btnBrowse:'浏览车辆',btnContact:'联系我们',btnWhatsapp:'💬 WhatsApp',statVehicles:'在售车辆',statSatisfaction:'客户满意',statExperience:'行业经验'},
+listings:{tag:'🚛 精选车源',title:'在售挂车展示',desc:'所有车辆均经过专业检测，车况真实描述，支持现场看车',filterAllTypes:'全部类型',filterAllYears:'全部年份',filterAllPrices:'全部价格',filterBefore2019:'2019年及以前',filterUnder5:'5万以下',filter5to10:'5-10万',filter10to15:'10-15万',filterOver15:'15万以上',filterSearch:'🔍 搜索车型或描述...',filterBtn:'筛选',filterReset:'重置',loading:'正在加载车辆数据...',emptyTitle:'没有找到匹配的车辆',emptyDesc:'试试调整筛选条件，或直接联系我们咨询更多车源'},
+contact:{sectionTitle:'联系我们',sectionDesc:'有任何问题或想看车，随时联系我们',title:'联系方式',desc:'我们承诺：所有车辆真实在售，价格透明，欢迎来电咨询或到店看车。',labelPhone:'联系电话',labelWechat:'微信',labelWhatsapp:'WhatsApp',labelAddress:'地址',btnWechat:'📱 查看微信二维码',btnWhatsapp:'💬 WhatsApp',formTitle:'在线留言咨询',formName:'您的姓名',formPhone:'手机号码',formInterest:'感兴趣的类型',formMessage:'留言内容（选填）',formSubmit:'提交咨询',msgSent:'✅ 咨询已提交！我们将尽快与您联系。',msgFillInfo:'✅ 已填好咨询信息，请提交表单'},
+wechat:{title:'📱 扫码添加微信',desc:'长按识别或扫描下方二维码添加好友',close:'关闭'},
+detail:{inquireNow:'📞 立即询价',callNow:'📞 打电话',whatsapp:'💬 WhatsApp',photos:'张照片'},
+admin:{loginTitle:'⚙️ 管理后台',loginDesc:'请输入管理密码以编辑网站内容',loginError:'❌ 密码错误，请重试',loginBtn:'登录',loginCancel:'取消',loginUnlocked:'🔓 已进入管理模式',panelHint:'修改后点击保存更改按钮即可生效',tabCompany:'公司信息',tabVehicles:'车辆管理',tabQr:'二维码',labelCompany:'公司名称',labelSlogan:'公司标语',labelHeroTitle:'Hero 标题',labelHeroDesc:'Hero 描述',labelPhone:'联系电话',labelWechat:'微信 ID',labelWhatsapp:'WhatsApp 号码',whatsappHelp:'只需数字，不要 + 号或空格',labelWhatsappDisplay:'WhatsApp 显示文字',labelAddress:'地址',addVehicle:'＋ 添加新车',labelQr:'微信二维码图片',qrHint:'可以上传图片文件，或输入图片网址',qrUpload:'点击上传二维码图片',qrUrlPlaceholder:'或输入图片网址',clearQr:'清除图片',saveBtn:'💾 保存更改',closeBtn:'关闭管理后台',saved:'💾 所有更改已保存！',noVehicles:'暂无车辆，点击上方添加',veTitle:'编辑车辆',veLabelTitle:'车辆标题',veLabelType:'类型',veLabelYear:'年份',veLabelPrice:'价格（万元）',veLabelMileage:'里程',veLabelLocation:'位置',veLabelBadge:'标签',veLabelDesc:'描述',veLabelImages:'车辆图片',veAddUrl:'添加',veUpload:'从手机/电脑上传图片',veSaveBtn:'保存车辆',veCancelBtn:'取消',veSaved:'✅ 车辆已保存',veDeleted:'🗑️ 车辆已删除',veRequired:'❌ 请填写车辆标题',veRequiredYear:'❌ 请填写年份和价格',addUrlPlaceholder:'输入图片网址，按回车添加'},
+footer:'二手挂车交易平台',
+toastAdminMode:'🔓 已进入管理模式'
+},'en':{
+nav:{vehicles:'Inventory',contact:'Contact Us'},
+hero:{btnBrowse:'Browse Vehicles',btnContact:'Contact Us',btnWhatsapp:'💬 WhatsApp',statVehicles:'Vehicles',statSatisfaction:'Satisfaction',statExperience:'Experience'},
+listings:{tag:'🚛 Featured Trailers',title:'Trailer Inventory',desc:'All vehicles professionally inspected. Honest condition reports. On-site viewing available.',filterAllTypes:'All Types',filterAllYears:'All Years',filterAllPrices:'All Prices',filterBefore2019:'2019 & Earlier',filterUnder5:'Under ¥50k',filter5to10:'¥50k-100k',filter10to15:'¥100k-150k',filterOver15:'¥150k+',filterSearch:'🔍 Search...',filterBtn:'Filter',filterReset:'Reset',loading:'Loading...',emptyTitle:'No vehicles found',emptyDesc:'Try adjusting filters or contact us.'},
+contact:{sectionTitle:'Contact Us',sectionDesc:'Have questions? Reach out anytime.',title:'Get In Touch',desc:'All vehicles available with transparent pricing.',labelPhone:'Phone',labelWechat:'WeChat',labelWhatsapp:'WhatsApp',labelAddress:'Address',btnWechat:'📱 WeChat QR',btnWhatsapp:'💬 WhatsApp',formTitle:'Send Inquiry',formName:'Your Name',formPhone:'Phone Number',formInterest:'Interest',formMessage:'Message (optional)',formSubmit:'Submit',msgSent:'✅ Submitted! We will contact you soon.',msgFillInfo:'✅ Info filled — please submit'},
+wechat:{title:'📱 Scan QR to Add WeChat',desc:'Scan the QR code to add us on WeChat',close:'Close'},
+detail:{inquireNow:'📞 Inquire Now',callNow:'📞 Call',whatsapp:'💬 WhatsApp',photos:'photos'},
+admin:{loginTitle:'⚙️ Admin Panel',loginDesc:'Enter password to edit content',loginError:'❌ Wrong password',loginBtn:'Login',loginCancel:'Cancel',loginUnlocked:'🔓 Admin mode activated',panelHint:'Changes save to your browser',tabCompany:'Company Info',tabVehicles:'Vehicle Mgmt',tabQr:'QR Code',labelCompany:'Company Name',labelSlogan:'Slogan',labelHeroTitle:'Hero Title',labelHeroDesc:'Hero Description',labelPhone:'Phone',labelWechat:'WeChat ID',labelWhatsapp:'WhatsApp Number',whatsappHelp:'Numbers only, no + or spaces',labelWhatsappDisplay:'WhatsApp Display',labelAddress:'Address',addVehicle:'＋ Add Vehicle',labelQr:'WeChat QR Image',qrHint:'Upload image or paste URL',qrUpload:'Click to upload QR',qrUrlPlaceholder:'Or paste URL',clearQr:'Clear Image',saveBtn:'💾 Save Changes',closeBtn:'Close Panel',saved:'💾 All changes saved!',noVehicles:'No vehicles yet.',veTitle:'Edit Vehicle',veLabelTitle:'Title',veLabelType:'Type',veLabelYear:'Year',veLabelPrice:'Price (¥10k)',veLabelMileage:'Mileage',veLabelLocation:'Location',veLabelBadge:'Badge',veLabelDesc:'Description',veLabelImages:'Vehicle Photos',veAddUrl:'Add',veUpload:'Upload from device',veSaveBtn:'Save Vehicle',veCancelBtn:'Cancel',veSaved:'✅ Vehicle saved',veDeleted:'🗑️ Vehicle deleted',veRequired:'❌ Please enter title',veRequiredYear:'❌ Please enter year & price',addUrlPlaceholder:'Enter image URL, press Enter'},
+footer:'Used Trailer Trading Platform',
+toastAdminMode:'🔓 Admin mode activated'
+},'ar':{
+nav:{vehicles:'عرض المركبات',contact:'اتصل بنا'},
+hero:{btnBrowse:'تصفح المركبات',btnContact:'اتصل بنا',btnWhatsapp:'💬 واتساب',statVehicles:'مركبة',statSatisfaction:'رضا العملاء',statExperience:'خبرة'},
+listings:{tag:'🚛 مقطورات مميزة',title:'المقطورات المعروضة',desc:'جميع المركبات تخضع لفحص مهني.',filterAllTypes:'جميع الأنواع',filterAllYears:'جميع السنوات',filterAllPrices:'جميع الأسعار',filterBefore2019:'٢٠١٩ فما قبل',filterUnder5:'أقل من ٥٠ ألف',filter5to10:'٥٠-١٠٠ ألف',filter10to15:'١٠٠-١٥٠ ألف',filterOver15:'أكثر من ١٥٠ ألف',filterSearch:'🔍 بحث...',filterBtn:'تصفية',filterReset:'إعادة',loading:'جاري التحميل...',emptyTitle:'لا توجد نتائج',emptyDesc:'حاول تعديل التصفية أو اتصل بنا.'},
+contact:{sectionTitle:'اتصل بنا',sectionDesc:'لديك استفسار؟ تواصل معنا.',title:'معلومات الاتصال',desc:'جميع المركبات متوفرة بأسعار شفافة.',labelPhone:'الهاتف',labelWechat:'وي تشات',labelWhatsapp:'واتساب',labelAddress:'العنوان',btnWechat:'📱 رمز وي تشات',btnWhatsapp:'💬 واتساب',formTitle:'أرسل استفساراً',formName:'الاسم',formPhone:'رقم الهاتف',formInterest:'نوع الاهتمام',formMessage:'الرسالة (اختياري)',formSubmit:'إرسال',msgSent:'✅ تم الإرسال! سنتواصل معك.',msgFillInfo:'✅ تم ملء المعلومات'},
+wechat:{title:'📱 امسح الرمز',desc:'امسح الرمز لإضافة وي تشات',close:'إغلاق'},
+detail:{inquireNow:'📞 استفسر الآن',callNow:'📞 اتصال',whatsapp:'💬 واتساب',photos:'صورة'},
+admin:{loginTitle:'⚙️ لوحة التحكم',loginDesc:'أدخل كلمة المرور',loginError:'❌ كلمة خاطئة',loginBtn:'دخول',loginCancel:'إلغاء',loginUnlocked:'🔓 تم تفعيل وضع الإدارة',panelHint:'التغييرات تحفظ في المتصفح',tabCompany:'معلومات الشركة',tabVehicles:'إدارة المركبات',tabQr:'رمز QR',labelCompany:'اسم الشركة',labelSlogan:'الشعار',labelHeroTitle:'عنوان الهيرو',labelHeroDesc:'وصف الهيرو',labelPhone:'الهاتف',labelWechat:'معرف وي تشات',labelWhatsapp:'رقم واتساب',whatsappHelp:'أرقام فقط',labelWhatsappDisplay:'عرض واتساب',labelAddress:'العنوان',addVehicle:'＋ إضافة مركبة',labelQr:'صورة رمز وي تشات',qrHint:'رفع صورة أو لصق رابط',qrUpload:'اضغط لرفع رمز QR',qrUrlPlaceholder:'أو الصق الرابط',clearQr:'مسح الصورة',saveBtn:'💾 حفظ التغييرات',closeBtn:'إغلاق',saved:'💾 تم الحفظ!',noVehicles:'لا توجد مركبات.',veTitle:'تعديل المركبة',veLabelTitle:'العنوان',veLabelType:'النوع',veLabelYear:'السنة',veLabelPrice:'السعر',veLabelMileage:'المسافة',veLabelLocation:'الموقع',veLabelBadge:'الوسم',veLabelDesc:'الوصف',veLabelImages:'صور المركبة',veAddUrl:'إضافة',veUpload:'رفع من الجهاز',veSaveBtn:'حفظ',veCancelBtn:'إلغاء',veSaved:'✅ تم الحفظ',veDeleted:'🗑️ تم الحذف',veRequired:'❌ أدخل العنوان',veRequiredYear:'❌ أدخل السنة والسعر',addUrlPlaceholder:'أدخل رابط الصورة، ثم اضغط إنتر'},
+footer:'منصة تجارة المقطورات المستعملة',
+toastAdminMode:'🔓 تم تفعيل وضع الإدارة'
+},'fa':{
+nav:{vehicles:'نمایش خودروها',contact:'تماس با ما'},
+hero:{btnBrowse:'مشاهده خودروها',btnContact:'تماس با ما',btnWhatsapp:'💬 واتساپ',statVehicles:'خودرو',statSatisfaction:'رضایت مشتری',statExperience:'سال تجربه'},
+listings:{tag:'🚛 تریلرهای ویژه',title:'تریلرهای موجود',desc:'همه خودروها بازرسی حرفه‌ای شده‌اند.',filterAllTypes:'همه انواع',filterAllYears:'همه سال‌ها',filterAllPrices:'همه قیمت‌ها',filterBefore2019:'۲۰۱۹ و قبل',filterUnder5:'زیر ۵۰ هزار',filter5to10:'۵۰-۱۰۰ هزار',filter10to15:'۱۰۰-۱۵۰ هزار',filterOver15:'بالای ۱۵۰ هزار',filterSearch:'🔍 جستجو...',filterBtn:'فیلتر',filterReset:'بازنشانی',loading:'در حال بارگذاری...',emptyTitle:'نتیجه‌ای یافت نشد',emptyDesc:'فیلترها را تنظیم کنید.'},
+contact:{sectionTitle:'تماس با ما',sectionDesc:'سوال دارید؟ تماس بگیرید.',title:'اطلاعات تماس',desc:'همه خودروها موجود با قیمت شفاف.',labelPhone:'تلفن',labelWechat:'وی‌چت',labelWhatsapp:'واتساپ',labelAddress:'آدرس',btnWechat:'📱 QR وی‌چت',btnWhatsapp:'💬 واتساپ',formTitle:'ارسال استعلام',formName:'نام شما',formPhone:'شماره تلفن',formInterest:'نوع مورد علاقه',formMessage:'پیام (اختیاری)',formSubmit:'ارسال',msgSent:'✅ ارسال شد!',msgFillInfo:'✅ اطلاعات تکمیل شد'},
+wechat:{title:'📱 اسکن کنید',desc:'برای افزودن در وی‌چت اسکن کنید',close:'بستن'},
+detail:{inquireNow:'📞 استعلام',callNow:'📞 تماس',whatsapp:'💬 واتساپ',photos:'عکس'},
+admin:{loginTitle:'⚙️ پنل مدیریت',loginDesc:'رمز عبور را وارد کنید',loginError:'❌ رمز اشتباه',loginBtn:'ورود',loginCancel:'لغو',loginUnlocked:'🔓 حالت مدیریت فعال',panelHint:'تغییرات در مرورگر ذخیره می‌شود',tabCompany:'اطلاعات شرکت',tabVehicles:'مدیریت خودروها',tabQr:'QR کد',labelCompany:'نام شرکت',labelSlogan:'شعار',labelHeroTitle:'عنوان هیرو',labelHeroDesc:'توضیحات هیرو',labelPhone:'تلفن',labelWechat:'شناسه وی‌چت',labelWhatsapp:'شماره واتساپ',whatsappHelp:'فقط اعداد',labelWhatsappDisplay:'نمایش واتساپ',labelAddress:'آدرس',addVehicle:'＋ افزودن خودرو',labelQr:'تصویر QR وی‌چت',qrHint:'آپلود یا چسباندن لینک',qrUpload:'برای آپلود کلیک کنید',qrUrlPlaceholder:'یا لینک را بچسبانید',clearQr:'پاک کردن',saveBtn:'💾 ذخیره',closeBtn:'بستن',saved:'💾 ذخیره شد!',noVehicles:'خودرویی وجود ندارد.',veTitle:'ویرایش خودرو',veLabelTitle:'عنوان',veLabelType:'نوع',veLabelYear:'سال',veLabelPrice:'قیمت',veLabelMileage:'مسافت',veLabelLocation:'موقعیت',veLabelBadge:'برچسب',veLabelDesc:'توضیحات',veLabelImages:'تصاویر خودرو',veAddUrl:'افزودن',veUpload:'آپلود از دستگاه',veSaveBtn:'ذخیره',veCancelBtn:'لغو',veSaved:'✅ ذخیره شد',veDeleted:'🗑️ حذف شد',veRequired:'❌ عنوان را وارد کنید',veRequiredYear:'❌ سال و قیمت را وارد کنید',addUrlPlaceholder:'لینک تصویر را وارد کنید، Enter بزنید'},
+footer:'پلتفرم تجارت تریلر دست دوم',
+toastAdminMode:'🔓 حالت مدیریت فعال'
+},'tr':{
+nav:{vehicles:'Araçlar',contact:'İletişim'},
+hero:{btnBrowse:'Araçları Gör',btnContact:'Bize Ulaşın',btnWhatsapp:'💬 WhatsApp',statVehicles:'Araç',statSatisfaction:'Memnuniyet',statExperience:'Yıllık Tecrübe'},
+listings:{tag:'🚛 Öne Çıkan Treylerler',title:'Treyler Envanteri',desc:'Tüm araçlar profesyonelce incelenmiştir.',filterAllTypes:'Tüm Tipler',filterAllYears:'Tüm Yıllar',filterAllPrices:'Tüm Fiyatlar',filterBefore2019:'2019 ve Öncesi',filterUnder5:'50bin altı',filter5to10:'50-100bin',filter10to15:'100-150bin',filterOver15:'150bin+',filterSearch:'🔍 Ara...',filterBtn:'Filtrele',filterReset:'Sıfırla',loading:'Yükleniyor...',emptyTitle:'Araç bulunamadı',emptyDesc:'Filtreleri değiştirin.'},
+contact:{sectionTitle:'İletişim',sectionDesc:'Sorularınız mı var?',title:'Bize Ulaşın',desc:'Tüm araçlar satılıktır.',labelPhone:'Telefon',labelWechat:'WeChat',labelWhatsapp:'WhatsApp',labelAddress:'Adres',btnWechat:'📱 WeChat QR',btnWhatsapp:'💬 WhatsApp',formTitle:'Sorgu Gönder',formName:'Adınız',formPhone:'Telefon',formInterest:'İlgi Alanı',formMessage:'Mesaj',formSubmit:'Gönder',msgSent:'✅ Gönderildi!',msgFillInfo:'✅ Bilgiler dolduruldu'},
+wechat:{title:'📱 WeChat için Tara',desc:'WeChat eklemek için QR tarayın',close:'Kapat'},
+detail:{inquireNow:'📞 Sorgula',callNow:'📞 Ara',whatsapp:'💬 WhatsApp',photos:'fotoğraf'},
+admin:{loginTitle:'⚙️ Yönetim Paneli',loginDesc:'Şifreyi girin',loginError:'❌ Yanlış şifre',loginBtn:'Giriş',loginCancel:'İptal',loginUnlocked:'🔓 Yönetici modu aktif',panelHint:'Değişiklikler kaydedilir',tabCompany:'Şirket Bilgisi',tabVehicles:'Araç Yönetimi',tabQr:'QR Kod',labelCompany:'Şirket Adı',labelSlogan:'Slogan',labelHeroTitle:'Hero Başlık',labelHeroDesc:'Hero Açıklama',labelPhone:'Telefon',labelWechat:'WeChat ID',labelWhatsapp:'WhatsApp No',whatsappHelp:'Sadece rakam',labelWhatsappDisplay:'WhatsApp Gösterim',labelAddress:'Adres',addVehicle:'＋ Araç Ekle',labelQr:'WeChat QR',qrHint:'Dosya yükle veya URL yapıştır',qrUpload:'QR yüklemek için tıkla',qrUrlPlaceholder:'Veya URL yapıştır',clearQr:'Temizle',saveBtn:'💾 Kaydet',closeBtn:'Kapat',saved:'💾 Kaydedildi!',noVehicles:'Henüz araç yok.',veTitle:'Aracı Düzenle',veLabelTitle:'Başlık',veLabelType:'Tip',veLabelYear:'Yıl',veLabelPrice:'Fiyat',veLabelMileage:'KM',veLabelLocation:'Konum',veLabelBadge:'Rozet',veLabelDesc:'Açıklama',veLabelImages:'Araç Fotoğrafları',veAddUrl:'Ekle',veUpload:'Cihazdan Yükle',veSaveBtn:'Kaydet',veCancelBtn:'İptal',veSaved:'✅ Kaydedildi',veDeleted:'🗑️ Silindi',veRequired:'❌ Başlık girin',veRequiredYear:'❌ Yıl ve fiyat girin',addUrlPlaceholder:'URL girin, Enter basın'},
+footer:'Kullanılmış Treyler Platformu',
+toastAdminMode:'🔓 Yönetici modu aktif'
+},'ku':{
+nav:{vehicles:'پیشاندانی ترێلەر',contact:'پەیوەندیمان پێوەبکە'},
+hero:{btnBrowse:'بینینی ترێلەرەکان',btnContact:'پەیوەندیمان پێوەبکە',btnWhatsapp:'💬 واتساپ',statVehicles:'ترێلەر',statSatisfaction:'ڕەزامەندی',statExperience:'ساڵ ئەزموون'},
+listings:{tag:'🚛 ترێلەری هەڵبژێردراو',title:'ترێلەرەکانی فرۆشتن',desc:'هەموو ترێلەرەکان پشکنینیان بۆ کراوە.',filterAllTypes:'هەموو جۆرەکان',filterAllYears:'هەموو ساڵەکان',filterAllPrices:'هەموو نرخەکان',filterBefore2019:'۲۰۱۹ و پێشتر',filterUnder5:'کەمتر لە ٥٠ هەزار',filter5to10:'٥٠-١٠٠ هەزار',filter10to15:'١٠٠-١٥٠ هەزار',filterOver15:'زیاتر لە ١٥٠ هەزار',filterSearch:'🔍 گەڕان...',filterBtn:'پاڵاوتن',filterReset:'ڕێکخستنەوە',loading:'بارکردن...',emptyTitle:'هیچ نەدۆزرایەوە',emptyDesc:'پاڵاوتەکان بگۆڕە.'},
+contact:{sectionTitle:'پەیوەندیمان پێوەبکە',sectionDesc:'پرسیار؟',title:'زانیاری پەیوەندی',desc:'هەموو ترێلەرەکان بەردەستن.',labelPhone:'تەلەفۆن',labelWechat:'ویچات',labelWhatsapp:'واتساپ',labelAddress:'ناونیشان',btnWechat:'📱 QR ویچات',btnWhatsapp:'💬 واتساپ',formTitle:'پرسیار بنێرە',formName:'ناو',formPhone:'ژمارە',formInterest:'جۆر',formMessage:'پەیام',formSubmit:'ناردن',msgSent:'✅ نێردرا!',msgFillInfo:'✅ زانیاری پڕکرا'},
+wechat:{title:'📱 ویچات زیاد بکە',desc:'بۆ زیادکردنی ویچات QR سکان بکە',close:'داخستن'},
+detail:{inquireNow:'📞 پرسیار',callNow:'📞 بانگ',whatsapp:'💬 واتساپ',photos:'وێنە'},
+admin:{loginTitle:'⚙️ پانێلی بەڕێوەبردن',loginDesc:'وشەی نهێنی بنووسە',loginError:'❌ هەڵەیە',loginBtn:'چوونەژوور',loginCancel:'پاشگەزبوونەوە',loginUnlocked:'🔓 چالاک کر',panelHint:'گۆڕانکاری دەپاشەکەوێت',tabCompany:'زانیاری کۆمپانیا',tabVehicles:'بەڕێوەبردن',tabQr:'QR کۆد',labelCompany:'ناوی کۆمپانیا',labelSlogan:'دروشم',labelHeroTitle:'ناونیشان',labelHeroDesc:'وەسف',labelPhone:'تەلەفۆن',labelWechat:'ID ویچات',labelWhatsapp:'ژمارەی واتساپ',whatsappHelp:'تەنها ژمارە',labelWhatsappDisplay:'پیشاندان',labelAddress:'ناونیشان',addVehicle:'＋ زیاد بکە',labelQr:'وێنەی QR',qrHint:'وێنە بار بکە',qrUpload:'بۆ بارکردن کرتە بکە',qrUrlPlaceholder:'یان لینک دابنێ',clearQr:'پاککردنەوە',saveBtn:'💾 پاشەکەوت',closeBtn:'داخستن',saved:'💾 پاشەکەوت کر!',noVehicles:'نیە.',veTitle:'دەستکاری',veLabelTitle:'ناونیشان',veLabelType:'جۆر',veLabelYear:'ساڵ',veLabelPrice:'نرخ',veLabelMileage:'مەودا',veLabelLocation:'شوێن',veLabelBadge:'بەج',veLabelDesc:'وەسف',veLabelImages:'وێنەکان',veAddUrl:'زیادکردن',veUpload:'بارکردن',veSaveBtn:'پاشەکەوت',veCancelBtn:'پاشگەزبوونەوە',veSaved:'✅ پاشەکەوت کر',veDeleted:'🗑️ سڕایەوە',veRequired:'❌ ناونیشان بنووسە',veRequiredYear:'❌ ساڵ و نرخ بنووسە',addUrlPlaceholder:'لینک بنووسە، Enter لێبدە'},
+footer:'پلاتفۆرمی بازرگانی ترێلەر',
+toastAdminMode:'🔓 چالاک کر'
+},'ur':{
+nav:{vehicles:'گاڑیوں کی نمائش',contact:'ہم سے رابطہ کریں'},
+hero:{btnBrowse:'گاڑیاں دیکھیں',btnContact:'رابطہ کریں',btnWhatsapp:'💬 واٹس ایپ',statVehicles:'گاڑیاں',statSatisfaction:'اطمینان',statExperience:'سال کا تجربہ'},
+listings:{tag:'🚛 نمایاں ٹریلر',title:'ٹریلر انوینٹری',desc:'تمام گاڑیاں پیشہ ورانہ معائنہ شدہ۔',filterAllTypes:'تمام اقسام',filterAllYears:'تمام سال',filterAllPrices:'تمام قیمتیں',filterBefore2019:'2019 اور پہلے',filterUnder5:'50 ہزار سے کم',filter5to10:'50-100 ہزار',filter10to15:'100-150 ہزار',filterOver15:'150 ہزار سے اوپر',filterSearch:'🔍 تلاش...',filterBtn:'فلٹر',filterReset:'ری سیٹ',loading:'لوڈ ہو رہا ہے...',emptyTitle:'کوئی گاڑی نہیں ملی',emptyDesc:'فلٹر تبدیل کریں۔'},
+contact:{sectionTitle:'رابطہ کریں',sectionDesc:'سوالات ہیں؟',title:'رابطہ کی معلومات',desc:'تمام گاڑیاں موجود ہیں۔',labelPhone:'فون',labelWechat:'وی چیٹ',labelWhatsapp:'واٹس ایپ',labelAddress:'پتہ',btnWechat:'📱 وی چیٹ QR',btnWhatsapp:'💬 واٹس ایپ',formTitle:'انکوائری بھیجیں',formName:'آپ کا نام',formPhone:'فون نمبر',formInterest:'دلچسپی',formMessage:'پیغام',formSubmit:'بھیجیں',msgSent:'✅ بھیج دیا!',msgFillInfo:'✅ معلومات بھر دی گئیں'},
+wechat:{title:'📱 وی چیٹ شامل کریں',desc:'وی چیٹ کیلئے QR اسکین کریں',close:'بند کریں'},
+detail:{inquireNow:'📞 انکوائری',callNow:'📞 کال',whatsapp:'💬 واٹس ایپ',photos:'تصاویر'},
+admin:{loginTitle:'⚙️ انتظامی پینل',loginDesc:'پاس ورڈ درج کریں',loginError:'❌ غلط پاس ورڈ',loginBtn:'لاگ ان',loginCancel:'منسوخ',loginUnlocked:'🔓 انتظامی موڈ فعال',panelHint:'تبدیلیاں محفوظ ہوتی ہیں',tabCompany:'کمپنی کی معلومات',tabVehicles:'گاڑیوں کا انتظام',tabQr:'QR کوڈ',labelCompany:'کمپنی کا نام',labelSlogan:'نعرہ',labelHeroTitle:'ہیرو ٹائٹل',labelHeroDesc:'ہیرو کی وضاحت',labelPhone:'فون',labelWechat:'وی چیٹ ID',labelWhatsapp:'واٹس ایپ نمبر',whatsappHelp:'صرف نمبر',labelWhatsappDisplay:'واٹس ایپ ڈسپلے',labelAddress:'پتہ',addVehicle:'＋ گاڑی شامل کریں',labelQr:'وی چیٹ QR',qrHint:'تصویر اپ لوڈ کریں',qrUpload:'QR اپ لوڈ کریں',qrUrlPlaceholder:'یا URL چسپاں کریں',clearQr:'صاف کریں',saveBtn:'💾 محفوظ کریں',closeBtn:'بند کریں',saved:'💾 محفوظ!',noVehicles:'کوئی گاڑی نہیں۔',veTitle:'ترمیم',veLabelTitle:'عنوان',veLabelType:'قسم',veLabelYear:'سال',veLabelPrice:'قیمت',veLabelMileage:'فاصلہ',veLabelLocation:'مقام',veLabelBadge:'بیج',veLabelDesc:'وضاحت',veLabelImages:'تصاویر',veAddUrl:'شامل کریں',veUpload:'اپ لوڈ کریں',veSaveBtn:'محفوظ',veCancelBtn:'منسوخ',veSaved:'✅ محفوظ',veDeleted:'🗑️ حذف',veRequired:'❌ عنوان درج کریں',veRequiredYear:'❌ سال اور قیمت درج کریں',addUrlPlaceholder:'تصویر کا URL درج کریں، Enter دبائیں'},
+footer:'استعمال شدہ ٹریلر پلیٹ فارم',
+toastAdminMode:'🔓 انتظامی موڈ فعال'
+}};
+
+// ===== i18n ENGINE =====
+let currentLang='zh-CN';
+function getText(key){const ks=key.split('.');let v=I18N[currentLang]||I18N['zh-CN'];for(const k of ks){if(v&&v[k]!==undefined)v=v[k];else{v=I18N['zh-CN'];for(const kk of ks)v=v?v[kk]:undefined;break}}return v!==undefined?v:key}
+function setText(id,t){const e=document.getElementById(id);if(e)e.textContent=t}
+function applyLanguage(lc){
+const lang=LANGUAGES.find(l=>l.code===lc);if(!lang)return;currentLang=lc;
+document.documentElement.lang=lc;document.documentElement.dir=lang.dir;document.body.classList.toggle('rtl',lang.dir==='rtl');
+const co=document.getElementById('editCompanyName')||{value:'顺盈汽贸'};const cn=co.value||'顺盈汽贸';
+document.title=cn+' - '+getText('footer');
+setText('navVehicles',getText('nav.vehicles'));setText('navContact',getText('nav.contact'));
+document.getElementById('langCurrent').innerHTML='🌐 '+lang.native;renderLangDropdown();
+setText('heroBtnBrowse',getText('hero.btnBrowse'));setText('heroBtnContact',getText('hero.btnContact'));
+setText('statVehiclesLabel',getText('hero.statVehicles'));setText('statSatisfaction',getText('hero.statSatisfaction'));setText('statExperience',getText('hero.statExperience'));
+setText('sectionTag',getText('listings.tag'));setText('sectionTitle',getText('listings.title'));setText('sectionDesc',getText('listings.desc'));
+setText('filterAllTypes',getText('listings.filterAllTypes'));setText('filterAllYears',getText('listings.filterAllYears'));setText('filterAllPrices',getText('listings.filterAllPrices'));
+setText('filterBefore2019',getText('listings.filterBefore2019'));setText('filterUnder5',getText('listings.filterUnder5'));setText('filter5to10',getText('listings.filter5to10'));setText('filter10to15',getText('listings.filter10to15'));setText('filterOver15',getText('listings.filterOver15'));
+document.getElementById('filterSearch').placeholder=getText('listings.filterSearch');
+setText('filterBtn',getText('listings.filterBtn'));setText('filterReset',getText('listings.filterReset'));setText('loadingText',getText('listings.loading'));
+setText('emptyTitle',getText('listings.emptyTitle'));setText('emptyDesc',getText('listings.emptyDesc'));
+setText('contactSectionTitle',getText('contact.sectionTitle'));setText('contactSectionDesc',getText('contact.sectionDesc'));
+setText('contactInfoTitle',getText('contact.title'));setText('contactInfoDesc',getText('contact.desc'));
+setText('contactLabelPhone',getText('contact.labelPhone'));setText('contactLabelWechat',getText('contact.labelWechat'));setText('contactLabelWhatsapp',getText('contact.labelWhatsapp'));setText('contactLabelAddress',getText('contact.labelAddress'));
+setText('contactBtnWechat',getText('contact.btnWechat'));
+setText('formTitle',getText('contact.formTitle'));document.getElementById('formName').placeholder=getText('contact.formName');document.getElementById('formPhone').placeholder=getText('contact.formPhone');
+document.getElementById('formInterestPlaceholder').textContent=getText('contact.formInterest');
+document.getElementById('formMessage').placeholder=getText('contact.formMessage');setText('formSubmit',getText('contact.formSubmit'));
+setText('wechatModalTitle',getText('wechat.title'));setText('wechatModalDesc',getText('wechat.desc'));setText('wechatModalClose',getText('wechat.close'));
+// Detail modal i18n is applied when opened
+try{localStorage.setItem('shunying_lang',lc)}catch(e){}
+document.getElementById('langDropdown').classList.remove('open');
+}
+function renderLangDropdown(){const dd=document.getElementById('langDropdown');dd.innerHTML=LANGUAGES.map(l=>`<button class="lang-option ${l.code===currentLang?'active':''}" onclick="applyLanguage('${l.code}')"><span class="native">${l.native}</span><span class="name">${l.name}</span></button>`).join('')}
+function toggleLangDropdown(){document.getElementById('langDropdown').classList.toggle('open')}
+document.addEventListener('click',function(e){const dd=document.getElementById('langDropdown'),btn=document.getElementById('langCurrent');if(!btn.contains(e.target)&&!dd.contains(e.target))dd.classList.remove('open')});
+
+// ===== DATA =====
+const DEFAULT_DATA={company:{name:'顺盈汽贸',slogan:'二手挂车 · 专业交易平台',heroTitle:'优质二手挂车 · <span>诚信交易</span>',heroDesc:'专注二手挂车交易多年，每辆车均经过专业检测。价格透明，手续齐全，让您买得放心、用得安心。',phone:'138-8888-8888',phoneRaw:'13888888888',wechat:'ShunYingTrailer',whatsapp:'6281234567890',whatsappDisplay:'+62 812-3456-7890',address:'山东省济宁市梁山县拳铺镇工业园'},qrImage:'',vehicles:[
+{id:1,title:'2022年 13米平板挂车',type:'平板挂车',year:2022,price:6.8,mileage:'8万公里',location:'山东·梁山',desc:'2022年上牌，13米标箱平板挂车，富华桥，风神轮胎，车况精品，无事故，手续齐全，支持提档过户。',badge:'精品车况',badgeType:'',images:[]},
+{id:2,title:'2021年 9.6米厢式挂车',type:'厢式挂车',year:2021,price:5.2,mileage:'12万公里',location:'山东·梁山',desc:'2021年9.6米厢式货车，原版漆面，内饰干净整洁，发动机动力强劲，空调冰冷，到手零投资。',badge:'热销',badgeType:'hot',images:[]},
+{id:3,title:'2023年 13.7米仓栅挂车',type:'仓栅挂车',year:2023,price:9.5,mileage:'3万公里',location:'山东·梁山',desc:'准新车状态，2023年上牌，13.7米仓栅挂车，加强型大梁，BPW桥，铝合金钢圈，可分期。',badge:'准新车',badgeType:'',images:[]},
+{id:4,title:'2020年 17.5米低平板挂车',type:'低平板挂车',year:2020,price:7.2,mileage:'15万公里',location:'山东·梁山',desc:'17.5米低平板，适合大件运输，加强型悬挂，轮胎成色好，无大修记录，价格可谈。',badge:'价格可谈',badgeType:'',images:[]},
+{id:5,title:'2022年 12.5米集装箱挂车',type:'集装箱挂车',year:2022,price:8.0,mileage:'6万公里',location:'山东·梁山',desc:'2022年12.5米集装箱骨架车，适合40尺集装箱，轻量化设计，保养仔细，随时看车。',badge:'热门推荐',badgeType:'hot',images:[]},
+{id:6,title:'2019年 13米平板挂车',type:'平板挂车',year:2019,price:4.2,mileage:'20万公里',location:'山东·梁山',desc:'2019年13米平板，经济实惠，适合短途运输，轮胎刚换，发动机变速箱工况良好。',badge:'超值',badgeType:'',images:[]}
+]};
+const STORAGE_KEY='shunying_data';
+function loadData(){try{const r=localStorage.getItem(STORAGE_KEY);if(r){const p=JSON.parse(r);return deepMerge(clone(DEFAULT_DATA),p)}}catch(e){}return clone(DEFAULT_DATA)}
+function saveData(d){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(d))}catch(e){}}
+function clone(o){return JSON.parse(JSON.stringify(o))}
+function deepMerge(t,s){const r=clone(t);for(const k in s){if(s[k]&&typeof s[k]==='object'&&!Array.isArray(s[k]))r[k]=deepMerge(r[k]||{},s[k]);else r[k]=s[k]}return r}
+let appData=loadData();
+let editingVehicleId=null;
+let editingTempImages=[];
+let detailCurrentIdx=0;
+let detailVehicleId=null;
+const VEHICLE_ICONS={'平板挂车':'🛻','仓栅挂车':'🚛','厢式挂车':'🚚','低平板挂车':'🏗️','集装箱挂车':'📦'};
+const PLACEHOLDER_COLORS=['linear-gradient(135deg,#667eea,#764ba2)','linear-gradient(135deg,#f093fb,#f5576c)','linear-gradient(135deg,#4facfe,#00f2fe)','linear-gradient(135deg,#43e97b,#38f9d7)','linear-gradient(135deg,#fa709a,#fee140)','linear-gradient(135deg,#a18cd1,#fbc2eb)'];
+
+// ===== RENDER =====
+function renderAll(){
+const c=appData.company;
+document.getElementById('logoDisplay').innerHTML='🚛 '+c.name+'<span id="logoSlogan">'+c.slogan+'</span>';
+document.getElementById('heroTitle').innerHTML=c.heroTitle;
+document.getElementById('heroDesc').textContent=c.heroDesc;
+document.getElementById('displayPhone').textContent=c.phone;
+document.getElementById('displayWechat').textContent=c.wechat;
+document.getElementById('displayWhatsapp').textContent=c.whatsappDisplay;
+document.getElementById('displayAddress').textContent=c.address;
+document.getElementById('statVehicles').textContent=appData.vehicles.length+'+';
+const waUrl='https://wa.me/'+c.whatsapp.replace(/[^0-9]/g,'');
+document.getElementById('heroWhatsappBtn').href=waUrl;
+document.getElementById('whatsappLink').href=waUrl;
+document.getElementById('whatsappBtnFooter').href=waUrl;
+updateQrDisplay();
+renderCards(appData.vehicles);
+const savedLang=localStorage.getItem('shunying_lang')||'zh-CN';
+applyLanguage(savedLang);
+}
+function renderCards(data){
+const grid=document.getElementById('trailerGrid'),empty=document.getElementById('emptyState');
+if(data.length===0){grid.innerHTML='';empty.style.display='block';return}
+empty.style.display='none';
+grid.innerHTML=data.map((t,idx)=>{
+const icon=VEHICLE_ICONS[t.type]||'🚛',bg=PLACEHOLDER_COLORS[idx%PLACEHOLDER_COLORS.length];
+const badgeClass=t.badgeType?'trailer-badge '+t.badgeType:'trailer-badge';
+const imgs=t.images||[];
+const cover=imgs.length>0?imgs[0]:'';
+const imgCount=imgs.length;
+return `<div class="trailer-card" onclick="openDetail(${t.id})">
+<div class="trailer-img" style="background:${bg}">${cover?`<img src="${cover}" alt="${t.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="placeholder-icon" style="display:none">${icon}</div>`:`<div class="placeholder-icon">${icon}</div>`}
+${imgCount>1?`<span class="img-count-badge">📷 ${imgCount}</span>`:''}
+<span class="${badgeClass}">${t.badge}</span></div>
+<div class="admin-badge-actions"><button class="edit-btn" onclick="event.stopPropagation();editVehicle(${t.id})">✏️</button><button class="del-btn" onclick="event.stopPropagation();deleteVehicle(${t.id})">✕</button></div>
+<div class="trailer-body"><h3>${t.title}</h3>
+<div class="trailer-meta"><span><span class="icon">📅</span> ${t.year}</span><span><span class="icon">📏</span> ${t.mileage}</span><span><span class="icon">📍</span> ${t.location}</span><span><span class="icon">🏷️</span> ${t.type}</span></div>
+<div class="trailer-desc">${t.desc}</div>
+<div class="trailer-footer"><div class="trailer-price">¥${t.price}万</div><button class="trailer-contact-btn" onclick="event.stopPropagation();openDetail(${t.id})">💬</button></div></div></div>`
+}).join('');
+}
+function updateQrDisplay(){
+const c=document.getElementById('qrContainer');
+if(appData.qrImage){c.innerHTML=`<img src="${appData.qrImage}" alt="QR" style="width:100%;height:100%;object-fit:contain">`}
+else{c.innerHTML=`<div style="text-align:center"><div style="font-size:48px;margin-bottom:8px">💬</div><div style="font-size:12px">（${getText('wechat.desc')}）</div><div style="font-size:16px;font-weight:600;color:#333;margin-top:8px">${appData.company.wechat}</div></div>`}
+}
+
+// ===== VEHICLE DETAIL =====
+function openDetail(id){
+const v=appData.vehicles.find(x=>x.id===id);if(!v)return;
+detailVehicleId=id;detailCurrentIdx=0;
+showDetailImage(v);
+document.getElementById('detailModal').classList.add('active');
+document.body.style.overflow='hidden';
+}
+function closeDetail(){document.getElementById('detailModal').classList.remove('active');document.body.style.overflow='';detailVehicleId=null}
+document.getElementById('detailModal').addEventListener('click',function(e){if(e.target===this)closeDetail()});
+
+function showDetailImage(v){
+const imgs=v.images||[];
+const hasImgs=imgs.length>0;
+const carousel=document.getElementById('detailCarousel');
+const icon=VEHICLE_ICONS[v.type]||'🚛';
+let html='';
+if(hasImgs){
+html=`<img class="main-img" src="${imgs[detailCurrentIdx]}" alt="${v.title}" onerror="this.alt='❌'">`;
+}else{
+html=`<div class="no-img">${icon}</div>`;
+}
+carousel.innerHTML=`<button class="detail-close" onclick="closeDetail()">✕</button>
+${hasImgs?`<button class="carousel-btn carousel-prev" onclick="carouselPrev()">‹</button>
+<button class="carousel-btn carousel-next" onclick="carouselNext()">›</button>
+<div class="carousel-dots" id="carouselDots">${imgs.map((_,i)=>`<button class="carousel-dot ${i===detailCurrentIdx?'active':''}" onclick="carouselGo(${i})"></button>`).join('')}</div>`:''}
+${html}`;
+
+// Thumbs
+const thumbs=document.getElementById('detailThumbs');
+if(hasImgs){
+thumbs.innerHTML=imgs.map((url,i)=>`<img src="${url}" class="${i===detailCurrentIdx?'active':''}" onclick="carouselGo(${i})">`).join('');
+thumbs.style.display='flex';
+}else{thumbs.style.display='none'}
+
+// Info
+document.getElementById('detailTitle').textContent=v.title;
+document.getElementById('detailMeta').innerHTML=`<span>📅 ${v.year}</span><span>📏 ${v.mileage}</span><span>📍 ${v.location}</span><span>🏷️ ${v.type}</span>`;
+document.getElementById('detailPrice').innerHTML=`¥${v.price}万 <small>${hasImgs?'📷 '+imgs.length+' '+getText('detail.photos'):''}</small>`;
+document.getElementById('detailDesc').textContent=v.desc;
+const c=appData.company;
+const waUrl='https://wa.me/'+c.whatsapp.replace(/[^0-9]/g,'');
+document.getElementById('detailActions').innerHTML=`
+<button class="btn btn-primary" onclick="closeDetail();contactAbout(${v.id})">${getText('detail.inquireNow')}</button>
+<a href="tel:${c.phoneRaw}" class="btn btn-outline" style="border-color:#ddd;color:#333;background:#f5f5f5">${getText('detail.callNow')}</a>
+<a href="${waUrl}" target="_blank" class="btn btn-whatsapp">${getText('detail.whatsapp')}</a>`;
+}
+function carouselPrev(){const v=appData.vehicles.find(x=>x.id===detailVehicleId);if(!v)return;const imgs=v.images||[];detailCurrentIdx=(detailCurrentIdx-1+imgs.length)%imgs.length;showDetailImage(v)}
+function carouselNext(){const v=appData.vehicles.find(x=>x.id===detailVehicleId);if(!v)return;const imgs=v.images||[];detailCurrentIdx=(detailCurrentIdx+1)%imgs.length;showDetailImage(v)}
+function carouselGo(i){detailCurrentIdx=i;const v=appData.vehicles.find(x=>x.id===detailVehicleId);if(v)showDetailImage(v)}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDetail();if(e.key==='ArrowLeft'&&detailVehicleId)carouselPrev();if(e.key==='ArrowRight'&&detailVehicleId)carouselNext()});
+
+// ===== FILTERS =====
+function applyFilters(){
+const t=document.getElementById('filterType').value;
+const y=document.getElementById('filterYear').value;
+const p=document.getElementById('filterPrice').value;
+const s=document.getElementById('filterSearch').value.toLowerCase().trim();
+const f=appData.vehicles.filter(v=>{
+if(t!=='all'&&v.type!==t)return false;
+if(y!=='all'){if(y==='2019'&&v.year>2019)return false;if(y!=='2019'&&v.year!==parseInt(y))return false}
+if(p!=='all'){const[mx,mn]=p.split('-').map(Number);if(v.price<mx||v.price>mn)return false}
+if(s&&!v.title.toLowerCase().includes(s)&&!v.desc.toLowerCase().includes(s))return false;
+return true});
+renderCards(f);
+document.getElementById('trailerGrid').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function resetFilters(){
+document.getElementById('filterType').value='all';
+document.getElementById('filterYear').value='all';
+document.getElementById('filterPrice').value='all';
+document.getElementById('filterSearch').value='';
+renderCards(appData.vehicles);
+}
+
+// ===== CONTACT =====
+function contactAbout(id){const t=appData.vehicles.find(x=>x.id===id);if(t){document.getElementById('contact').scrollIntoView({behavior:'smooth'});const ta=document.querySelector('.contact-form textarea');if(ta)ta.value=getText('contact.msgFillInfo');showToast(getText('contact.msgFillInfo'))}}
+function showWechat(){document.getElementById('wechatModal').classList.add('active');document.body.style.overflow='hidden'}
+function hideWechat(){document.getElementById('wechatModal').classList.remove('active');document.body.style.overflow=''}
+document.getElementById('wechatModal').addEventListener('click',function(e){if(e.target===this)hideWechat()});
+function handleSubmit(e){e.preventDefault();const btn=e.target.querySelector('.submit-btn');btn.textContent='⏳ ...';btn.disabled=true;setTimeout(()=>{showToast(getText('contact.msgSent'));btn.textContent=getText('contact.formSubmit');btn.disabled=false;e.target.reset();window.scrollTo({top:0,behavior:'smooth'})},1200)}
+
+// ===== ADMIN =====
+const ADMIN_PASSWORD='admin123';
+function showAdminLogin(){document.getElementById('adminLoginModal').classList.add('active');document.getElementById('adminPwdInput').value='';document.getElementById('adminLoginError').style.display='none';document.body.style.overflow='hidden';setTimeout(()=>document.getElementById('adminPwdInput').focus(),200)}
+function hideAdminLogin(){document.getElementById('adminLoginModal').classList.remove('active');document.body.style.overflow=''}
+document.getElementById('adminLoginModal').addEventListener('click',function(e){if(e.target===this)hideAdminLogin()});
+function adminLogin(){const p=document.getElementById('adminPwdInput').value;if(p===ADMIN_PASSWORD){hideAdminLogin();document.body.classList.add('admin-mode');openAdminPanel();showToast(getText('toastAdminMode'))}else{document.getElementById('adminLoginError').style.display='block';document.getElementById('adminPwdInput').value='';document.getElementById('adminPwdInput').focus()}}
+function applyAdminLang(){
+const t=k=>getText('admin.'+k);
+setText('adminLoginTitle',t('loginTitle'));setText('adminLoginDesc',t('loginDesc'));setText('adminLoginError',t('loginError'));setText('adminLoginBtn',t('loginBtn'));setText('adminLoginCancel',t('loginCancel'));
+setText('adminPanelHint',t('panelHint'));setText('adminTabCompany',t('tabCompany'));setText('adminTabVehicles',t('tabVehicles'));setText('adminTabQr',t('tabQr'));
+setText('adminLabelCompany',t('labelCompany'));setText('adminLabelSlogan',t('labelSlogan'));setText('adminLabelHeroTitle',t('labelHeroTitle'));setText('adminLabelHeroDesc',t('labelHeroDesc'));
+setText('adminLabelPhone',t('labelPhone'));setText('adminLabelWechat',t('labelWechat'));setText('adminLabelWhatsapp',t('labelWhatsapp'));setText('adminWhatsappHelp',t('whatsappHelp'));
+setText('adminLabelWhatsappDisplay',t('labelWhatsappDisplay'));setText('adminLabelAddress',t('labelAddress'));setText('adminAddVehicle',t('addVehicle'));
+setText('adminLabelQr',t('labelQr'));setText('adminQrHint',t('qrHint'));setText('qrUploadHint',t('qrUpload'));document.getElementById('qrUrlInput').placeholder=t('qrUrlPlaceholder');
+setText('adminClearQr',t('clearQr'));setText('adminSaveBtn',t('saveBtn'));setText('adminCloseBtn',t('closeBtn'));document.getElementById('adminPwdInput').placeholder=t('loginDesc');
+setText('vehicleEditTitle',t('veTitle'));setText('veLabelTitle',t('veLabelTitle'));setText('veLabelType',t('veLabelType'));setText('veLabelYear',t('veLabelYear'));
+setText('veLabelPrice',t('veLabelPrice'));setText('veLabelMileage',t('veLabelMileage'));setText('veLabelLocation',t('veLabelLocation'));setText('veLabelBadge',t('veLabelBadge'));
+setText('veLabelDesc',t('veLabelDesc'));setText('veLabelImages',t('veLabelImages'));setText('veAddUrlBtn',t('veAddUrl'));setText('veSaveBtn',t('veSaveBtn'));setText('veCancelBtn',t('veCancelBtn'));
+document.getElementById('veImageUrlInput').placeholder=t('addUrlPlaceholder');
+}
+function openAdminPanel(){
+const c=appData.company;
+document.getElementById('editCompanyName').value=c.name;document.getElementById('editSlogan').value=c.slogan;
+document.getElementById('editHeroTitle').value=c.heroTitle.replace(/<[^>]*>/g,'');document.getElementById('editHeroDesc').value=c.heroDesc;
+document.getElementById('editPhone').value=c.phone;document.getElementById('editWechat').value=c.wechat;
+document.getElementById('editWhatsapp').value=c.whatsapp;document.getElementById('editWhatsappDisplay').value=c.whatsappDisplay;
+document.getElementById('editAddress').value=c.address;
+updateQrPreview();renderVehicleList();switchAdminTab('tabCompany');applyAdminLang();
+document.getElementById('adminPanelModal').classList.add('active');document.body.style.overflow='hidden';
+}
+function hideAdminPanel(){document.getElementById('adminPanelModal').classList.remove('active');document.body.style.overflow='';document.body.classList.remove('admin-mode')}
+document.getElementById('adminPanelModal').addEventListener('click',function(e){if(e.target===this)hideAdminPanel()});
+function switchAdminTab(t){document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.admin-panel').forEach(x=>x.classList.remove('active'));document.querySelector(`[data-tab="${t}"]`).classList.add('active');document.getElementById(t).classList.add('active')}
+function handleQrFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=function(ev){document.getElementById('qrPreviewImg').src=ev.target.result;document.getElementById('qrPreviewImg').style.display='block';document.getElementById('qrUploadHint').textContent='✅ OK';document.getElementById('qrUrlInput').value=ev.target.result};r.readAsDataURL(f)}
+function updateQrPreview(){const p=document.getElementById('qrPreviewImg'),h=document.getElementById('qrUploadHint'),u=document.getElementById('qrUrlInput');u.value=appData.qrImage||'';if(appData.qrImage){p.src=appData.qrImage;p.style.display='block';h.textContent='✅ OK'}else{p.style.display='none';h.textContent=getText('admin.qrUpload')||'Click to upload'}}
+function clearQrImage(){document.getElementById('qrPreviewImg').style.display='none';document.getElementById('qrUploadHint').textContent=getText('admin.qrUpload');document.getElementById('qrUrlInput').value='';document.getElementById('qrFileInput').value=''}
+
+// ===== ADMIN VEHICLE LIST =====
+function renderVehicleList(){
+const l=document.getElementById('vehicleList');
+if(appData.vehicles.length===0){l.innerHTML='<p style="text-align:center;color:#999;padding:20px">'+getText('admin.noVehicles')+'</p>';return}
+l.innerHTML=appData.vehicles.map(v=>`<div class="admin-vehicle-item"><div class="vinfo"><div class="vtitle">${v.title}</div><div class="vmeta">${v.type} · ${v.year} · ¥${v.price}万${(v.images||[]).length>0?' · 📷'+(v.images||[]).length:''}</div></div><button class="vedit" onclick="editVehicle(${v.id})">✏️</button><button class="vdel" onclick="deleteVehicle(${v.id})">🗑️</button></div>`).join('');
+}
+
+// ===== VEHICLE EDIT WITH MULTI-IMAGE =====
+function addNewVehicle(){
+editingVehicleId=null;editingTempImages=[];
+document.getElementById('vehicleEditTitle').textContent=getText('admin.veTitle')||'添加新车';
+document.getElementById('veId').value='';document.getElementById('veTitle').value='';
+document.getElementById('veType').value='平板挂车';document.getElementById('veYear').value=new Date().getFullYear();
+document.getElementById('vePrice').value='';document.getElementById('veMileage').value='';
+document.getElementById('veLocation').value='山东·梁山';document.getElementById('veBadge').value='';
+document.getElementById('veDesc').value='';document.getElementById('veImageUrlInput').value='';
+renderImageList();
+document.getElementById('vehicleEditModal').classList.add('active');document.body.style.overflow='hidden';
+}
+function editVehicle(id){
+const v=appData.vehicles.find(x=>x.id===id);if(!v)return;
+editingVehicleId=id;editingTempImages=[...(v.images||[])];
+document.getElementById('vehicleEditTitle').textContent=getText('admin.veTitle');
+document.getElementById('veId').value=id;document.getElementById('veTitle').value=v.title;
+document.getElementById('veType').value=v.type;document.getElementById('veYear').value=v.year;
+document.getElementById('vePrice').value=v.price;document.getElementById('veMileage').value=v.mileage;
+document.getElementById('veLocation').value=v.location;document.getElementById('veBadge').value=v.badge;
+document.getElementById('veDesc').value=v.desc;document.getElementById('veImageUrlInput').value='';
+renderImageList();
+document.getElementById('vehicleEditModal').classList.add('active');document.body.style.overflow='hidden';
+}
+function hideVehicleEdit(){document.getElementById('vehicleEditModal').classList.remove('active');document.body.style.overflow=''}
+document.getElementById('vehicleEditModal').addEventListener('click',function(e){if(e.target===this)hideVehicleEdit()});
+
+function renderImageList(){
+const container=document.getElementById('imageUploadList');
+container.innerHTML=editingTempImages.map((url,i)=>`
+<div class="img-upload-item"><img src="${url}" onerror="this.parentElement.innerHTML='<span style=color:#999;font-size:11px>❌</span>'"><button class="remove-img" onclick="removeImage(${i})">✕</button></div>
+`).join('');
+container.innerHTML+=`<button class="img-add-area" onclick="document.getElementById('veFileInput').click()"><span class="plus">+</span><span>${getText('admin.veUpload')||'上传'}</span></button>`;
+}
+function addImageUrl(){
+const url=document.getElementById('veImageUrlInput').value.trim();
+if(!url){showToast('请输入图片网址',true);return}
+editingTempImages.push(url);
+document.getElementById('veImageUrlInput').value='';
+renderImageList();
+showToast('✅ '+getText('admin.veSaved'));
+}
+function removeImage(idx){
+editingTempImages.splice(idx,1);
+renderImageList();
+}
+function handleVehicleFiles(e){
+const files=e.target.files;if(!files.length)return;
+let loaded=0;
+for(const f of files){
+const r=new FileReader();
+r.onload=function(ev){
+editingTempImages.push(ev.target.result);
+loaded++;
+if(loaded===files.length){renderImageList();showToast('✅ '+loaded+' '+(getText('detail.photos')||'photos'))}
+};
+r.readAsDataURL(f);
+}
+e.target.value='';
+}
+
+function saveVehicle(){
+const title=document.getElementById('veTitle').value.trim();
+const type=document.getElementById('veType').value;
+const year=parseInt(document.getElementById('veYear').value);
+const price=parseFloat(document.getElementById('vePrice').value);
+const mileage=document.getElementById('veMileage').value.trim();
+const location=document.getElementById('veLocation').value.trim();
+const badge=document.getElementById('veBadge').value.trim()||'在售';
+const desc=document.getElementById('veDesc').value.trim();
+if(!title){showToast(getText('admin.veRequired'),true);return}
+if(!year||!price){showToast(getText('admin.veRequiredYear'),true);return}
+const id=editingVehicleId||Date.now();
+const vehicle={id,title,type,year,price,mileage,location,desc,badge,badgeType:'',images:[...editingTempImages]};
+if(editingVehicleId){const idx=appData.vehicles.findIndex(v=>v.id===editingVehicleId);if(idx!==-1)appData.vehicles[idx]=vehicle}
+else appData.vehicles.push(vehicle);
+saveData(appData);
+hideVehicleEdit();
+renderVehicleList();
+renderCards(appData.vehicles);
+document.getElementById('statVehicles').textContent=appData.vehicles.length+'+';
+showToast(getText('admin.veSaved'));
+}
+function deleteVehicle(id){
+if(!confirm('确定删除？'))return;
+appData.vehicles=appData.vehicles.filter(v=>v.id!==id);
+saveData(appData);
+renderVehicleList();
+renderCards(appData.vehicles);
+document.getElementById('statVehicles').textContent=appData.vehicles.length+'+';
+showToast(getText('admin.veDeleted'));
+}
+
+// ===== ADMIN SAVE =====
+function saveAdminChanges(){
+const c=appData.company;
+c.name=document.getElementById('editCompanyName').value.trim()||'顺盈汽贸';
+c.slogan=document.getElementById('editSlogan').value.trim()||'二手挂车 · 专业交易平台';
+const hr=document.getElementById('editHeroTitle').value.trim();c.heroTitle=hr||'优质二手挂车 · 诚信交易';
+c.heroDesc=document.getElementById('editHeroDesc').value.trim()||c.heroDesc;
+c.phone=document.getElementById('editPhone').value.trim()||c.phone;c.phoneRaw=c.phone.replace(/[^0-9]/g,'');
+c.wechat=document.getElementById('editWechat').value.trim()||c.wechat;
+c.whatsapp=document.getElementById('editWhatsapp').value.trim()||c.whatsapp;
+c.whatsappDisplay=document.getElementById('editWhatsappDisplay').value.trim()||c.whatsappDisplay;
+c.address=document.getElementById('editAddress').value.trim()||c.address;
+appData.qrImage=document.getElementById('qrUrlInput').value.trim()||'';
+saveData(appData);
+renderAll();
+hideAdminPanel();
+showToast(getText('admin.saved'));
+document.body.classList.remove('admin-mode');
+}
+
+// ===== TOAST =====
+function showToast(msg,isError){const t=document.getElementById('toast');t.textContent=msg;t.className='toast'+(isError?' error':'');t.classList.add('show');clearTimeout(t._timer);t._timer=setTimeout(()=>t.classList.remove('show'),3000)}
+
+// ===== MISC =====
+document.getElementById('menuToggle').addEventListener('click',function(){document.getElementById('navLinks').classList.toggle('open')});
+document.querySelectorAll('.nav-links a').forEach(l=>{l.addEventListener('click',()=>{document.getElementById('navLinks').classList.remove('open')})});
+window.addEventListener('scroll',function(){document.getElementById('scrollTop').classList.toggle('visible',window.scrollY>400)});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){hideWechat();hideAdminLogin();hideAdminPanel();hideVehicleEdit()}});
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded',function(){
+renderLangDropdown();
+const loading=document.getElementById('loading');loading.style.display='block';
+setTimeout(()=>{loading.style.display='none';renderAll()},500);
+});
+</script>
 </body>
 </html>
