@@ -812,6 +812,13 @@ const SYNC_CONFIG_KEY='shunying_sync_config';
 function getSyncConfig(){try{return JSON.parse(localStorage.getItem(SYNC_CONFIG_KEY))||{}}catch(e){return{}}}
 function saveSyncConfig(c){localStorage.setItem(SYNC_CONFIG_KEY,JSON.stringify(c))}
 function base64Encode(str){const bytes=new TextEncoder().encode(str);let bin='';for(let i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);return btoa(bin)}
+// Strip base64 images from data before cloud sync (keep them local only)
+function stripBase64ForSync(data){
+const clean=JSON.parse(JSON.stringify(data));
+if(clean.qrImage&&clean.qrImage.startsWith('data:'))clean.qrImage='';
+if(clean.vehicles){clean.vehicles.forEach(v=>{if(v.images)v.images=v.images.filter(u=>!u.startsWith('data:'))})}
+return clean;
+}
 
 // Load sync settings into admin panel
 function loadSyncSettings(){
@@ -835,9 +842,10 @@ let sha='';
 const getResp=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`,{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}});
 if(getResp.ok){const info=await getResp.json();sha=info.sha}
 else if(getResp.status!==404){const e=await getResp.json();throw new Error(e.message||'获取文件信息失败')}
-// Prepare commit body
+// Prepare commit body (strip base64 images — they stay local only)
 appData._updatedAt=Date.now();
-const content=base64Encode(JSON.stringify(appData,null,2));
+const uploadData=stripBase64ForSync(appData);
+const content=base64Encode(JSON.stringify(uploadData,null,2));
 const body={message:'🔄 数据同步 '+new Date().toISOString().slice(0,19).replace('T',' '),content:content,branch:branch};
 if(sha)body.sha=sha;
 const putResp=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(body)});
@@ -888,8 +896,11 @@ async function loadDataWithCloud(){
 const loading=document.getElementById('loading');
 if(loading)loading.style.display='block';
 let loaded=false;
+const controller=new AbortController();
+const timeoutId=setTimeout(()=>controller.abort(),15000);
 try{
-const resp=await fetch('./data.json?t='+Date.now());
+const resp=await fetch('./data.json?t='+Date.now(),{signal:controller.signal});
+clearTimeout(timeoutId);
 if(resp.ok){
 const cloudData=await resp.json();
 if(cloudData.company&&cloudData.vehicles){
@@ -903,13 +914,22 @@ const localTime=localData._updatedAt||0;
 const cloudTime=cloudData._updatedAt||0;
 if(localTime>cloudTime){
 appData=deepMerge(clone(DEFAULT_DATA),localData);
+}else{
+// Cloud loaded — merge back base64 images from local (they're stripped from cloud)
+try{
+const ll=localStorage.getItem(STORAGE_KEY);
+if(ll){const ld=JSON.parse(ll);
+if(ld.vehicles){ld.vehicles.forEach(lv=>{const cv=appData.vehicles.find(v=>v.id===lv.id);if(cv&&lv.images){lv.images.filter(u=>u.startsWith('data:')).forEach(b=>{if(!cv.images.includes(b))cv.images.push(b)})}})}
+if(ld.qrImage&&ld.qrImage.startsWith('data:')&&!appData.qrImage)appData.qrImage=ld.qrImage;
+}
+}catch(e2){}
 }
 }
 }catch(e){}
 saveData(appData);loaded=true;
 }
 }
-}catch(e){/* cloud unavailable, fall through */}
+}catch(e){clearTimeout(timeoutId);/* cloud unavailable, fall through */}
 if(!loaded){appData=loadData()}
 if(loading)loading.style.display='none';
 renderAll();
