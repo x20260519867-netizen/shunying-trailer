@@ -179,6 +179,9 @@ body.rtl .carousel-next{right:auto;left:16px}
 .carousel-dots{display:flex;gap:6px;justify-content:center;padding:10px;position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.6))}
 .carousel-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4);border:none;cursor:pointer;transition:all .3s;padding:0}
 .carousel-dot.active{background:#e74c3c;width:24px;border-radius:4px}
+.carousel-counter{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.5);color:#fff;padding:3px 12px;border-radius:12px;font-size:12px;z-index:3;pointer-events:none;font-weight:600}
+.carousel-swipe-hint{position:absolute;bottom:50px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.4);color:rgba(255,255,255,.7);padding:4px 14px;border-radius:16px;font-size:11px;z-index:3;pointer-events:none;transition:opacity .8s;opacity:0}
+.carousel-swipe-hint.show{opacity:1}
 .detail-thumbs{display:flex;gap:6px;padding:8px 12px;background:#f5f5f5;overflow-x:auto}
 .detail-thumbs img{width:60px;height:45px;object-fit:cover;border-radius:4px;cursor:pointer;opacity:.5;transition:all .3s;flex-shrink:0;border:2px solid transparent}
 .detail-thumbs img.active{opacity:1;border-color:#e74c3c}
@@ -299,10 +302,13 @@ body.rtl .scroll-top{right:auto;left:24px}
 .lang-dropdown{right:auto;left:0}
 body.rtl .lang-dropdown{left:auto;right:0}
 .detail-modal .modal-box{max-width:100%;border-radius:0;min-height:100dvh;overflow-y:auto}
-.detail-carousel .main-img{max-height:300px}
+.detail-carousel{min-height:250px}
+.detail-carousel .main-img{max-height:40vh;min-height:220px}
+.carousel-btn{width:50px;height:50px;font-size:26px}
 .detail-info{padding:16px;padding-bottom:32px}
 .detail-price{font-size:26px}
-.detail-thumbs img{width:50px;height:38px}
+.detail-thumbs{padding:8px 12px;gap:8px}
+.detail-thumbs img{width:65px;height:48px;border-radius:6px}
 .detail-actions .btn{min-width:0;padding:10px 16px;font-size:13px}
 }
 
@@ -729,10 +735,14 @@ html=`<img class="main-img" src="${imgs[detailCurrentIdx]}" alt="${v.title}" one
 html=`<div class="no-img">${icon}</div>`;
 }
 carousel.innerHTML=`<button class="detail-close" onclick="closeDetail()">✕</button>
+${hasImgs&&imgs.length>1?`<div class="carousel-counter">${detailCurrentIdx+1}/${imgs.length}</div>`:''}
 ${hasImgs?`<button class="carousel-btn carousel-prev" onclick="carouselPrev()">‹</button>
 <button class="carousel-btn carousel-next" onclick="carouselNext()">›</button>
 <div class="carousel-dots" id="carouselDots">${imgs.map((_,i)=>`<button class="carousel-dot ${i===detailCurrentIdx?'active':''}" onclick="carouselGo(${i})"></button>`).join('')}</div>`:''}
+${hasImgs&&imgs.length>1?`<div class="carousel-swipe-hint show" id="swipeHint">👈 滑动切换 →</div>`:''}
 ${html}`;
+// Auto-hide swipe hint after 3s
+if(hasImgs&&imgs.length>1){setTimeout(()=>{const h=document.getElementById('swipeHint');if(h)h.classList.remove('show')},3000)}
 
 // Thumbs
 const thumbs=document.getElementById('detailThumbs');
@@ -759,9 +769,10 @@ function carouselNext(){const v=appData.vehicles.find(x=>x.id===detailVehicleId)
 function carouselGo(i){detailCurrentIdx=i;const v=appData.vehicles.find(x=>x.id===detailVehicleId);if(v)showDetailImage(v)}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDetail();if(e.key==='ArrowLeft'&&detailVehicleId)carouselPrev();if(e.key==='ArrowRight'&&detailVehicleId)carouselNext()});
 // Touch swipe for carousel
-let touchStartX=0,touchEndX=0;
-document.addEventListener('touchstart',function(e){if(!detailVehicleId)return;const t=e.changedTouches[0];touchStartX=t.screenX},false);
-document.addEventListener('touchend',function(e){if(!detailVehicleId)return;const t=e.changedTouches[0];touchEndX=t.screenX;handleSwipe()},false);
+let touchStartX=0,touchEndX=0,touchStartY=0,touchSwiping=false;
+document.addEventListener('touchstart',function(e){if(!detailVehicleId)return;const t=e.changedTouches[0];touchStartX=t.screenX;touchStartY=t.screenY;touchSwiping=false},false);
+document.addEventListener('touchmove',function(e){if(!detailVehicleId||!touchStartX)return;const t=e.changedTouches[0];const dx=Math.abs(t.screenX-touchStartX);const dy=Math.abs(t.screenY-touchStartY);if(dx>dy&&dx>20){touchSwiping=true;e.preventDefault()}},{passive:false});
+document.addEventListener('touchend',function(e){if(!detailVehicleId)return;if(touchSwiping){const t=e.changedTouches[0];touchEndX=t.screenX;handleSwipe()}touchStartX=0;touchSwiping=false},false);
 function handleSwipe(){const diff=touchStartX-touchEndX;if(Math.abs(diff)>60){if(diff>0)carouselNext();else carouselPrev()}}
 // Share function
 function shareVehicle(){const v=appData.vehicles.find(x=>x.id===detailVehicleId);if(!v)return;const c=appData.company;const txt=`🚛 ${v.title}\n💰 ¥${v.price}万\n📅 ${v.year}年 · 📏 ${v.mileage}\n📍 ${v.location}\n\n${c.name}\n📞 ${c.phone}`;const url=window.location.href;if(navigator.share){navigator.share({title:v.title,text:txt,url:url}).catch(()=>{})}else{navigator.clipboard.writeText(txt+'\n'+url).then(()=>showToast('✅ 已复制到剪贴板')).catch(()=>showToast('❌ 复制失败',true))}}
