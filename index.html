@@ -812,11 +812,11 @@ const SYNC_CONFIG_KEY='shunying_sync_config';
 function getSyncConfig(){try{return JSON.parse(localStorage.getItem(SYNC_CONFIG_KEY))||{}}catch(e){return{}}}
 function saveSyncConfig(c){localStorage.setItem(SYNC_CONFIG_KEY,JSON.stringify(c))}
 function base64Encode(str){const bytes=new TextEncoder().encode(str);let bin='';for(let i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);return btoa(bin)}
-// Strip base64 images from data before cloud sync (keep them local only)
+// Strip large base64 images from cloud sync (keep only URLs and small thumbnails)
 function stripBase64ForSync(data){
 const clean=JSON.parse(JSON.stringify(data));
-if(clean.qrImage&&clean.qrImage.startsWith('data:'))clean.qrImage='';
-if(clean.vehicles){clean.vehicles.forEach(v=>{if(v.images)v.images=v.images.filter(u=>!u.startsWith('data:'))})}
+if(clean.qrImage&&clean.qrImage.startsWith('data:')&&clean.qrImage.length>50000)clean.qrImage='';
+if(clean.vehicles){clean.vehicles.forEach(v=>{if(v.images)v.images=v.images.filter(u=>!u.startsWith('data:')||u.length<50000)})}
 return clean;
 }
 
@@ -864,7 +864,16 @@ const resp=await fetch('./data.json?t='+Date.now());
 if(!resp.ok)throw new Error('HTTP '+resp.status);
 const data=await resp.json();
 if(!data.company||!data.vehicles)throw new Error('数据格式不正确');
-appData=data;saveData(appData);renderAll();
+appData=deepMerge(clone(DEFAULT_DATA),data);
+// Merge back local base64 images
+try{
+const ll=localStorage.getItem(STORAGE_KEY);
+if(ll){const ld=JSON.parse(ll);
+if(ld.vehicles){ld.vehicles.forEach(lv=>{const cv=appData.vehicles.find(v=>v.id===lv.id);if(cv&&lv.images){lv.images.filter(u=>u.startsWith('data:')).forEach(b=>{if(!cv.images.includes(b))cv.images.push(b)})}})}
+if(ld.qrImage&&ld.qrImage.startsWith('data:')&&!appData.qrImage)appData.qrImage=ld.qrImage;
+}
+}catch(e2){}
+saveData(appData);renderAll();
 showToast('✅ 已从云端同步数据');
 }catch(e){showToast('❌ 下载失败: '+e.message,true)}
 }
@@ -968,7 +977,7 @@ document.getElementById('adminPanelModal').classList.add('active');document.body
 function hideAdminPanel(){document.getElementById('adminPanelModal').classList.remove('active');document.body.style.overflow='';document.body.classList.remove('admin-mode')}
 document.getElementById('adminPanelModal').addEventListener('click',function(e){if(e.target===this)hideAdminPanel()});
 function switchAdminTab(t){document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.admin-panel').forEach(x=>x.classList.remove('active'));document.querySelector(`[data-tab="${t}"]`).classList.add('active');document.getElementById(t).classList.add('active')}
-function handleQrFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=function(ev){document.getElementById('qrPreviewImg').src=ev.target.result;document.getElementById('qrPreviewImg').style.display='block';document.getElementById('qrUploadHint').textContent='✅ OK';document.getElementById('qrUrlInput').value=ev.target.result};r.readAsDataURL(f)}
+function handleQrFile(e){const f=e.target.files[0];if(!f)return;compressImage(f,600,0.8,function(dataUrl){document.getElementById('qrPreviewImg').src=dataUrl;document.getElementById('qrPreviewImg').style.display='block';document.getElementById('qrUploadHint').textContent='✅ OK';document.getElementById('qrUrlInput').value=dataUrl})}
 function updateQrPreview(){const p=document.getElementById('qrPreviewImg'),h=document.getElementById('qrUploadHint'),u=document.getElementById('qrUrlInput');u.value=appData.qrImage||'';if(appData.qrImage){p.src=appData.qrImage;p.style.display='block';h.textContent='✅ OK'}else{p.style.display='none';h.textContent=getText('admin.qrUpload')||'Click to upload'}}
 function clearQrImage(){document.getElementById('qrPreviewImg').style.display='none';document.getElementById('qrUploadHint').textContent=getText('admin.qrUpload');document.getElementById('qrUrlInput').value='';document.getElementById('qrFileInput').value=''}
 
@@ -1029,15 +1038,31 @@ function handleVehicleFiles(e){
 const files=e.target.files;if(!files.length)return;
 let loaded=0;
 for(const f of files){
-const r=new FileReader();
-r.onload=function(ev){
-editingTempImages.push(ev.target.result);
+compressImage(f,800,0.8,function(dataUrl){
+editingTempImages.push(dataUrl);
 loaded++;
 if(loaded===files.length){renderImageList();showToast('✅ '+loaded+' '+(getText('detail.photos')||'photos'))}
-};
-r.readAsDataURL(f);
+});
 }
 e.target.value='';
+}
+// Compress image: resize to maxW, quality 0-1
+function compressImage(file,maxW,quality,cb){
+const reader=new FileReader();
+reader.onload=function(e){
+const img=new Image();
+img.onload=function(){
+const canvas=document.createElement('canvas');
+let w=img.width,h=img.height;
+if(w>maxW){h=h*maxW/w;w=maxW}
+canvas.width=w;canvas.height=h;
+const ctx=canvas.getContext('2d');
+ctx.drawImage(img,0,0,w,h);
+cb(canvas.toDataURL('image/jpeg',quality));
+};
+img.src=e.target.result;
+};
+reader.readAsDataURL(file);
 }
 
 function saveVehicle(){
