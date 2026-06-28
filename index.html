@@ -825,6 +825,7 @@ const getResp=await fetch(`https://api.github.com/repos/${owner}/${repo}/content
 if(getResp.ok){const info=await getResp.json();sha=info.sha}
 else if(getResp.status!==404){const e=await getResp.json();throw new Error(e.message||'获取文件信息失败')}
 // Prepare commit body
+appData._updatedAt=Date.now();
 const content=base64Encode(JSON.stringify(appData,null,2));
 const body={message:'🔄 数据同步 '+new Date().toISOString().slice(0,19).replace('T',' '),content:content,branch:branch};
 if(sha)body.sha=sha;
@@ -881,12 +882,18 @@ const resp=await fetch('./data.json?t='+Date.now());
 if(resp.ok){
 const cloudData=await resp.json();
 if(cloudData.company&&cloudData.vehicles){
-// Merge with defaults (in case new fields were added)
 appData=deepMerge(clone(DEFAULT_DATA),cloudData);
-// Also check localStorage for overlays the user might have saved
+// Check if localStorage has newer unsaved edits — if so, prefer local
 try{
-const local=localStorage.getItem(STORAGE_KEY);
-if(local){const p=JSON.parse(local);appData=deepMerge(appData,p)}
+const localStr=localStorage.getItem(STORAGE_KEY);
+if(localStr){
+const localData=JSON.parse(localStr);
+const localTime=localData._updatedAt||0;
+const cloudTime=cloudData._updatedAt||0;
+if(localTime>cloudTime){
+appData=deepMerge(clone(DEFAULT_DATA),localData);
+}
+}
 }catch(e){}
 saveData(appData);loaded=true;
 }
@@ -1017,6 +1024,7 @@ const id=editingVehicleId||Date.now();
 const vehicle={id,title,type,year,price,mileage,location,desc,badge,badgeType:'',images:[...editingTempImages]};
 if(editingVehicleId){const idx=appData.vehicles.findIndex(v=>v.id===editingVehicleId);if(idx!==-1)appData.vehicles[idx]=vehicle}
 else appData.vehicles.push(vehicle);
+appData._updatedAt=Date.now();
 saveData(appData);
 hideVehicleEdit();
 renderVehicleList();
@@ -1047,6 +1055,7 @@ c.whatsapp=document.getElementById('editWhatsapp').value.trim()||c.whatsapp;
 c.whatsappDisplay=document.getElementById('editWhatsappDisplay').value.trim()||c.whatsappDisplay;
 c.address=document.getElementById('editAddress').value.trim()||c.address;
 appData.qrImage=document.getElementById('qrUrlInput').value.trim()||'';
+appData._updatedAt=Date.now();
 saveData(appData);
 renderAll();
 hideAdminPanel();
