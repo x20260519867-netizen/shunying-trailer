@@ -830,12 +830,13 @@ else status.innerHTML='⚪ 未同步过';
 }
 
 // Upload data to GitHub via API
-async function syncToCloud(){
-const token=document.getElementById('syncTokenInput').value.trim();
-if(!token){showToast('❌ 请填写 GitHub Token',true);return}
+async function syncToCloud(silent){
+const token=document.getElementById('syncTokenInput')?document.getElementById('syncTokenInput').value.trim():'';
+if(!token){const cfg=getSyncConfig();token=cfg.token||''}
+if(!token){if(!silent)showToast('❌ 请填写 GitHub Token',true);return}
 const cfg=getSyncConfig();cfg.token=token;saveSyncConfig(cfg);
 const owner='x20260519867-netizen',repo='shunying-trailer',path='data.json',branch='master';
-showToast('⏳ 正在同步到云端...');
+if(!silent)showToast('⏳ 正在同步到云端...');
 try{
 // Get SHA of existing file
 let sha='';
@@ -852,8 +853,8 @@ const putResp=await fetch(`https://api.github.com/repos/${owner}/${repo}/content
 if(!putResp.ok){const e=await putResp.json();throw new Error(e.message||'上传失败')}
 cfg.lastSync=new Date().toISOString();saveSyncConfig(cfg);
 loadSyncSettings();
-showToast('✅ 数据已上传！1-2 分钟后其他设备刷新即可看到');
-}catch(e){showToast('❌ 同步失败: '+e.message,true)}
+if(!silent)showToast('✅ 数据已上传！1-2 分钟后其他设备刷新即可看到');
+}catch(e){if(!silent)showToast('❌ 同步失败: '+e.message,true)}
 }
 
 // Download data from cloud (data.json via raw URL)
@@ -876,6 +877,16 @@ if(ld.qrImage&&ld.qrImage.startsWith('data:')&&!appData.qrImage)appData.qrImage=
 saveData(appData);renderAll();
 showToast('✅ 已从云端同步数据');
 }catch(e){showToast('❌ 下载失败: '+e.message,true)}
+}
+
+// Auto-sync to cloud after save (if token is configured)
+function tryAutoSync(){
+const cfg=getSyncConfig();
+if(!cfg.token)return;
+syncToCloud(true).then(function(ok){
+if(ok)showToast('✅ 已保存并同步到云端');
+else showToast('⚠️ 已保存，但同步失败',true);
+}).catch(function(){});
 }
 
 // Export/Import JSON
@@ -1087,6 +1098,7 @@ renderVehicleList();
 renderCards(appData.vehicles);
 document.getElementById('statVehicles').textContent=appData.vehicles.length+'+';
 showToast(getText('admin.veSaved'));
+tryAutoSync();
 }
 function deleteVehicle(id){
 if(!confirm('确定删除？'))return;
@@ -1117,6 +1129,9 @@ renderAll();
 hideAdminPanel();
 showToast(getText('admin.saved'));
 document.body.classList.remove('admin-mode');
+// Auto sync to cloud if configured
+const _cfg=getSyncConfig();
+if(_cfg.token){showToast('☁️ 正在同步到云端...');tryAutoSync();}
 }
 
 // ===== TOAST =====
