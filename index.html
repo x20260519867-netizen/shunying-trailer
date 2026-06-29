@@ -831,7 +831,7 @@ else status.innerHTML='⚪ 未同步过';
 
 // Upload data to GitHub via API
 async function syncToCloud(silent){
-const token=document.getElementById('syncTokenInput')?document.getElementById('syncTokenInput').value.trim():'';
+let token=document.getElementById('syncTokenInput')?document.getElementById('syncTokenInput').value.trim():'';
 if(!token){const cfg=getSyncConfig();token=cfg.token||''}
 if(!token){if(!silent)showToast('❌ 请填写 GitHub Token',true);return}
 const cfg=getSyncConfig();cfg.token=token;saveSyncConfig(cfg);
