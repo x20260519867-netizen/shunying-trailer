@@ -625,7 +625,7 @@ footer a:hover{color:var(--yel)}
 
 <script>
 // ===== 自动版本检测（页面代码更新时自动刷新，客户无需手动清缓存）=====
-var PAGE_VERSION=5;
+var PAGE_VERSION=6;
 var VERSION_URL='https://raw.githubusercontent.com/x20260519867-netizen/shunying-trailer/master/version.json';
 (function(){
 try{
@@ -1117,7 +1117,7 @@ if(!silent)showToast('⏳ 正在上传数据到云端...');
 try{
 // Get SHA of existing file
 let sha='';
-const getResp=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`,{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'}});
+const getResp=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`,{headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json'}});
 if(getResp.ok){const info=await getResp.json();sha=info.sha}
 else if(getResp.status!==404){const e=await getResp.json();throw new Error(e.message||'获取文件信息失败')}
 // Prepare commit body (strip base64 images — they stay local only)
@@ -1127,8 +1127,8 @@ const uploadData=stripBase64ForSync(appData);
 const content=base64Encode(JSON.stringify(uploadData,null,2));
 const body={message:'🔄 数据同步 '+new Date().toISOString().slice(0,19).replace('T',' '),content:content,branch:branch};
 if(sha)body.sha=sha;
-const putResp=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(body)});
-if(!putResp.ok){const e=await putResp.json();throw new Error(e.message||'上传失败')}
+const putResp=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`,{method:'PUT',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify(body)});
+if(!putResp.ok){var e=await putResp.json().catch(function(){return{}});if(putResp.status===403)throw new Error('Token无写入权限！请到 GitHub Settings → Tokens → 编辑此Token → Contents 权限设为 Read and write');if(putResp.status===401)throw new Error('Token无效或已过期');throw new Error(e.message||'上传失败 HTTP '+putResp.status)}
 // 本地也保存一份，记录上传时间戳
 saveData(appData);
 cfg.lastSync=new Date().toISOString();saveSyncConfig(cfg);
