@@ -24,7 +24,9 @@
       "desc": "2022年上牌，13米标箱平板挂车，富华桥，风神轮胎，车况精品，无事故，手续齐全，支持提档过户。",
       "badge": "精品车况",
       "badgeType": "",
-      "images": []
+      "images": [
+        "https://raw.githubusercontent.com/x20260519867-netizen/shunying-trailer/master/images/veh_1_1_1783003483740.jpg"
+      ]
     },
     {
       "id": 2,
@@ -92,5 +94,5 @@
       "images": []
     }
   ],
-  "_updatedAt": 1783002549003
+  "_updatedAt": 1783003488581
 }
