@@ -432,7 +432,9 @@ footer a:hover{color:var(--yel)}
 <input type="text" id="filterSearch" placeholder="搜索车型或描述...">
 <button class="filter-btn" onclick="applyFilters()" id="filterBtn">筛选</button>
 <button class="filter-reset" onclick="resetFilters()" id="filterReset">重置</button>
+<button class="filter-btn" onclick="forceSyncNow()" style="background:#22c55e;margin-left:6px" title="检查云端最新数据">🔄 刷新数据</button>
 </div>
+<div id="syncStatusBar" style="text-align:center;padding:8px 12px;font-size:12px;color:#888;display:none;background:#f0fdf4;border-radius:8px;margin-bottom:16px"></div>
 <div class="loading-spinner" id="loading"><div class="spinner"></div><p id="loadingText">正在加载车辆数据...</p></div>
 <div class="trailer-grid" id="trailerGrid"></div>
 <div class="empty-state" id="emptyState"><div class="icon">🔍</div><h3 id="emptyTitle">没有找到匹配的车辆</h3><p id="emptyDesc">试试调整筛选条件，或直接联系我们咨询更多车源</p></div>
@@ -966,26 +968,36 @@ showToast('❌ 无法连接云端',true);
 
 // ===== 自动同步 =====
 // 定时检查云端是否有更新，有则自动拉取
-async function checkCloudForUpdates(){
-if(!autoSyncEnabled)return;
-// 如果用户正在编辑，跳过自动同步
+async function checkCloudForUpdates(showResult){
+if(!autoSyncEnabled&&!showResult)return;
+// 如果用户正在编辑且不是手动触发，跳过
+if(!showResult){
 if(document.getElementById('adminPanelModal').classList.contains('active'))return;
 if(document.getElementById('vehicleEditModal').classList.contains('active'))return;
+}
+var statusBar=document.getElementById('syncStatusBar');
+if(showResult&&statusBar){statusBar.style.display='block';statusBar.style.color='#888';statusBar.textContent='⏳ 正在检查云端数据...'}
 try{
-const resp=await fetch(RAW_DATA_URL+'?t='+Date.now(),{cache:'no-store'});
-if(!resp.ok)return;
-const cloudData=await resp.json();
-if(!cloudData.company||!cloudData.vehicles)return;
-const cloudTime=cloudData._updatedAt||0;
-const localTime=appData._updatedAt||0;
+var resp=await fetch(RAW_DATA_URL+'?t='+Date.now(),{cache:'no-store'});
+if(!resp.ok){
+if(showResult&&statusBar){statusBar.textContent='❌ 无法连接云端';statusBar.style.color='#e74c3c'}
+return;
+}
+var cloudData=await resp.json();
+if(!cloudData.company||!cloudData.vehicles){
+if(showResult&&statusBar){statusBar.textContent='❌ 云端数据格式异常';statusBar.style.color='#e74c3c'}
+return;
+}
+var cloudTime=cloudData._updatedAt||0;
+var localTime=appData._updatedAt||0;
 if(cloudTime>localTime){
-// 云端更新，自动拉取
-const oldCount=appData.vehicles.length;
+// 云端更新，自动/手动拉取
+var oldCount=appData.vehicles.length;
 appData=deepMerge(clone(DEFAULT_DATA),cloudData);
 // 合并本地 base64 图片
 try{
-const ll=localStorage.getItem(STORAGE_KEY);
-if(ll){const ld=JSON.parse(ll);
+var ll=localStorage.getItem(STORAGE_KEY);
+if(ll){var ld=JSON.parse(ll);
 if(ld.vehicles){ld.vehicles.forEach(function(lv){var cv=appData.vehicles.find(function(v){return v.id===lv.id});if(cv&&lv.images){lv.images.filter(function(u){return u.startsWith('data:')}).forEach(function(b){if(!cv.images.includes(b))cv.images.push(b)})}})}
 if(ld.qrImage&&ld.qrImage.startsWith('data:')&&!appData.qrImage)appData.qrImage=ld.qrImage;
 }
@@ -993,9 +1005,24 @@ if(ld.qrImage&&ld.qrImage.startsWith('data:')&&!appData.qrImage)appData.qrImage=
 appData._updatedAt=cloudTime;
 saveData(appData);renderAll();
 try{sessionStorage.setItem('shunying_data_source','cloud')}catch(e){}
-console.log('🔄 自动同步: 云端',cloudData.vehicles.length,'辆车 (本地原有',oldCount,'辆)');
+var msg='✅ 已同步云端最新数据 ('+cloudData.vehicles.length+'辆车)';
+console.log('🔄 同步完成: 云端',cloudData.vehicles.length,'辆车 (本地原有',oldCount,'辆)');
+if(showResult){showToast(msg);if(statusBar){statusBar.textContent=msg;statusBar.style.color='#22c55e';statusBar.style.background='#f0fdf4';setTimeout(function(){statusBar.style.display='none'},5000)}}
+else{showToast(msg)}
+}else{
+if(showResult){
+showToast('✅ 数据已是最新 ('+cloudData.vehicles.length+'辆车)');
+if(statusBar){statusBar.textContent='✅ 数据已是最新 — '+new Date(cloudTime).toLocaleString();statusBar.style.color='#22c55e';statusBar.style.background='#f0fdf4';setTimeout(function(){statusBar.style.display='none'},4000)}
 }
-}catch(e){/* 静默失败，下次再试 */}
+}
+}catch(e){
+if(showResult&&statusBar){statusBar.textContent='❌ 网络错误，请检查连接';statusBar.style.color='#e74c3c'}
+}
+}
+
+// 强制同步按钮（普通用户也可使用）
+function forceSyncNow(){
+checkCloudForUpdates(true);
 }
 
 // 自动上传：保存数据后自动推送到云端
@@ -1013,10 +1040,9 @@ const cfg=getAutoSyncConfig();
 autoSyncEnabled=cfg.enabled!==false;
 if(autoSyncTimer)clearInterval(autoSyncTimer);
 if(autoSyncEnabled){
-// 首次延迟5秒后检查，之后每30秒检查
+// 首次2秒后检查（让页面先渲染完），之后每30秒检查
 autoSyncTimer=setInterval(checkCloudForUpdates,AUTO_SYNC_INTERVAL);
-// 页面加载后延迟检查一次
-setTimeout(checkCloudForUpdates,5000);
+setTimeout(function(){checkCloudForUpdates(false)},2000);
 console.log('🔄 自动同步已启动 (间隔'+AUTO_SYNC_INTERVAL/1000+'秒)');
 }
 }
@@ -1190,6 +1216,13 @@ if(dataSource==='local-newer'){
 setTimeout(function(){showToast('⚠️ 检测到本地有未同步的数据，请进入管理后台同步到云端')},1500);
 }
 renderAll();
+// 显示数据加载来源
+try{
+var sb=document.getElementById('syncStatusBar');
+if(sb&&dataSource==='cloud'){sb.style.display='block';sb.textContent='✅ 已加载云端最新数据 ('+appData.vehicles.length+'辆车)';sb.style.color='#22c55e';sb.style.background='#f0fdf4';setTimeout(function(){sb.style.display='none'},5000)}
+else if(sb&&dataSource==='local-newer'){sb.style.display='block';sb.textContent='⚠️ 显示的是本地数据，云端可能有更新';sb.style.color='#f39c12';sb.style.background='#fffbeb'}
+else if(sb&&dataSource==='local-offline'){sb.style.display='block';sb.textContent='💻 离线模式 — 显示本地缓存数据';sb.style.color='#888';sb.style.background='#f5f5f5'}
+}catch(e){}
 // 启动自动同步轮询
 startAutoSync();
 }
