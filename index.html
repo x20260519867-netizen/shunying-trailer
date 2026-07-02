@@ -625,7 +625,7 @@ footer a:hover{color:var(--yel)}
 
 <script>
 // ===== 自动版本检测（页面代码更新时自动刷新，客户无需手动清缓存）=====
-var PAGE_VERSION=6;
+var PAGE_VERSION=7;
 var VERSION_URL='https://raw.githubusercontent.com/x20260519867-netizen/shunying-trailer/master/version.json';
 (function(){
 try{
@@ -939,7 +939,50 @@ function saveAutoSyncConfig(c){localStorage.setItem(AUTO_SYNC_KEY,JSON.stringify
 function getSyncConfig(){try{return JSON.parse(localStorage.getItem(SYNC_CONFIG_KEY))||{}}catch(e){return{}}}
 function saveSyncConfig(c){localStorage.setItem(SYNC_CONFIG_KEY,JSON.stringify(c))}
 function base64Encode(str){const bytes=new TextEncoder().encode(str);let bin='';for(let i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);return btoa(bin)}
-// Strip large base64 images from cloud sync (keep only URLs and small thumbnails)
+// 将 base64 图片上传到 GitHub 仓库，返回 raw URL
+async function uploadImageToRepo(base64Url,token,filename){
+const cfg=getSyncConfig();if(!token)token=cfg.token||'';
+if(!token)throw new Error('未配置Token');
+// 解析 base64 data URL: data:image/jpeg;base64,xxxx
+var match=base64Url.match(/^data:image\/(\w+);base64,(.+)/);
+if(!match)return base64Url; // 已经是普通URL，直接返回
+var ext=match[1]==='jpeg'?'jpg':match[1];
+var b64=match[2];
+var path='images/'+filename+'.'+ext;
+var owner='x20260519867-netizen',repo='shunying-trailer',branch='master';
+// 检查是否已存在
+var sha='';
+try{var gr=await fetch('https://api.github.com/repos/'+owner+'/'+repo+'/contents/'+path+'?ref='+branch,{headers:{'Authorization':'Bearer '+token,'Accept':'application/vnd.github.v3+json'}});if(gr.ok){var gi=await gr.json();sha=gi.sha}}catch(e){}
+// 上传
+var body={message:'📷 上传图片 '+filename,content:b64,branch:branch};
+if(sha)body.sha=sha;
+var resp=await fetch('https://api.github.com/repos/'+owner+'/'+repo+'/contents/'+path,{method:'PUT',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json','X-GitHub-Api-Version':'2022-11-28'},body:JSON.stringify(body)});
+if(!resp.ok){var err=await resp.json().catch(function(){return{}});throw new Error(err.message||'图片上传失败')}
+return 'https://raw.githubusercontent.com/'+owner+'/'+repo+'/'+branch+'/'+path;
+}
+
+// 处理车辆图片：将base64上传到GitHub并替换为URL
+async function processVehicleImages(vehicle,token){
+if(!vehicle.images||!vehicle.images.length)return;
+var newImages=[];
+for(var i=0;i<vehicle.images.length;i++){
+var img=vehicle.images[i];
+if(img&&img.startsWith('data:image/')){
+try{
+var filename='veh_'+vehicle.id+'_'+(i+1)+'_'+Date.now();
+var url=await uploadImageToRepo(img,token,filename);
+newImages.push(url);
+console.log('📷 图片已上传: '+url);
+}catch(e){
+console.error('图片上传失败: '+e.message);
+newImages.push(img); // 保留原base64作为备用
+}
+}else{newImages.push(img)}
+}
+vehicle.images=newImages;
+}
+
+// 清理云端数据中的 base64 图片（只保留URL引用）
 function stripBase64ForSync(data){
 const clean=JSON.parse(JSON.stringify(data));
 if(clean.qrImage&&clean.qrImage.startsWith('data:')&&clean.qrImage.length>50000)clean.qrImage='';
@@ -1392,7 +1435,7 @@ img.src=e.target.result;
 reader.readAsDataURL(file);
 }
 
-function saveVehicle(){
+async function saveVehicle(){
 const title=document.getElementById('veTitle').value.trim();
 const type=document.getElementById('veType').value;
 const year=parseInt(document.getElementById('veYear').value);
@@ -1405,6 +1448,12 @@ if(!title){showToast(getText('admin.veRequired'),true);return}
 if(!year||!price){showToast(getText('admin.veRequiredYear'),true);return}
 const id=editingVehicleId||Date.now();
 const vehicle={id,title,type,year,price,mileage,location,desc,badge,badgeType:'',images:[...editingTempImages]};
+// 上传base64图片到GitHub，替换为真实URL
+const hasBase64=vehicle.images.some(function(u){return u&&u.startsWith('data:image/')});
+if(hasBase64){
+showToast('📷 正在上传图片到云端...');
+try{await processVehicleImages(vehicle);showToast('✅ 图片已上传')}catch(e){showToast('⚠️ 图片上传失败: '+e.message,true)}
+}
 if(editingVehicleId){const idx=appData.vehicles.findIndex(v=>v.id===editingVehicleId);if(idx!==-1)appData.vehicles[idx]=vehicle}
 else appData.vehicles.push(vehicle);
 appData._updatedAt=Date.now();
@@ -1429,7 +1478,7 @@ tryAutoSync();
 }
 
 // ===== ADMIN SAVE =====
-function saveAdminChanges(){
+async function saveAdminChanges(){
 const c=appData.company;
 c.name=document.getElementById('editCompanyName').value.trim()||'顺盈汽贸';
 c.slogan=document.getElementById('editSlogan').value.trim()||'二手挂车 · 专业交易平台';
@@ -1440,7 +1489,13 @@ c.wechat=document.getElementById('editWechat').value.trim()||c.wechat;
 c.whatsapp=document.getElementById('editWhatsapp').value.trim()||c.whatsapp;
 c.whatsappDisplay=document.getElementById('editWhatsappDisplay').value.trim()||c.whatsappDisplay;
 c.address=document.getElementById('editAddress').value.trim()||c.address;
-appData.qrImage=document.getElementById('qrUrlInput').value.trim()||'';
+var qr=document.getElementById('qrUrlInput').value.trim()||'';
+// 上传QR码base64图片
+if(qr&&qr.startsWith('data:image/')){
+showToast('📷 正在上传二维码...');
+try{qr=await uploadImageToRepo(qr,null,'qr_code_'+Date.now());showToast('✅ 二维码已上传')}catch(e){showToast('⚠️ 二维码上传失败: '+e.message,true)}
+}
+appData.qrImage=qr;
 appData._updatedAt=Date.now();
 saveData(appData);
 renderAll();
