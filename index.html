@@ -464,7 +464,14 @@ body.rtl .lang-dropdown{left:auto;right:0}
 </div>
 <div class="admin-panel" id="tabSync">
 <label>🔄 数据同步</label>
-<p style="font-size:12px;color:#999;margin-bottom:12px">修改数据后上传到云端，所有设备共享同一份数据</p>
+<p style="font-size:12px;color:#999;margin-bottom:12px">在一台设备修改数据后上传，另一台设备下载即可同步</p>
+
+<!-- 数据来源指示 -->
+<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px;margin-bottom:16px">
+<div style="font-size:13px;font-weight:600;color:#0369a1;margin-bottom:4px">📊 当前数据来源</div>
+<div style="font-size:12px;color:#555" id="syncDataSource">加载中...</div>
+<div style="font-size:11px;color:#999;margin-top:4px" id="syncDataTime"></div>
+</div>
 
 <div style="background:#f8f9fa;border-radius:8px;padding:16px;margin-bottom:16px">
 <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:4px">GitHub Token（个人访问令牌）</label>
@@ -475,6 +482,10 @@ body.rtl .lang-dropdown{left:auto;right:0}
 <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
 <button class="btn btn-primary" onclick="syncToCloud()" style="flex:1;padding:10px;font-size:13px;min-width:100px">☁️ 上传到云端</button>
 <button class="btn" onclick="syncFromCloud()" style="flex:1;padding:10px;font-size:13px;min-width:100px;background:#3498db;color:#fff;border:none;border-radius:6px;cursor:pointer">⬇️ 从云端下载</button>
+</div>
+
+<div style="display:flex;gap:8px;margin-bottom:12px">
+<button class="btn" onclick="verifySync()" style="flex:1;padding:10px;font-size:13px;min-width:100px;background:#f0f0f0;color:#555;border:none;border-radius:6px;cursor:pointer">🔍 检查云端数据</button>
 </div>
 
 <div style="font-size:12px;color:#999;margin-bottom:12px" id="syncStatus">⚪ 未配置同步</div>
@@ -809,6 +820,7 @@ function handleSubmit(e){e.preventDefault();const btn=e.target.querySelector('.s
 
 // ===== CLOUD SYNC =====
 const SYNC_CONFIG_KEY='shunying_sync_config';
+const RAW_DATA_URL='https://raw.githubusercontent.com/x20260519867-netizen/shunying-trailer/master/data.json';
 function getSyncConfig(){try{return JSON.parse(localStorage.getItem(SYNC_CONFIG_KEY))||{}}catch(e){return{}}}
 function saveSyncConfig(c){localStorage.setItem(SYNC_CONFIG_KEY,JSON.stringify(c))}
 function base64Encode(str){const bytes=new TextEncoder().encode(str);let bin='';for(let i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);return btoa(bin)}
@@ -825,8 +837,49 @@ function loadSyncSettings(){
 const cfg=getSyncConfig();
 document.getElementById('syncTokenInput').value=cfg.token||'';
 const status=document.getElementById('syncStatus');
-if(cfg.lastSync)status.innerHTML='✅ 上次同步: '+new Date(cfg.lastSync).toLocaleString();
-else status.innerHTML='⚪ 未同步过';
+if(cfg.lastSync)status.innerHTML='✅ 上次操作: '+new Date(cfg.lastSync).toLocaleString();
+else status.innerHTML='⚪ 尚未进行同步操作';
+// 更新数据来源指示
+updateDataSourceInfo();
+}
+
+// 显示当前数据来源信息
+function updateDataSourceInfo(){
+const src=sessionStorage.getItem('shunying_data_source')||'unknown';
+const el=document.getElementById('syncDataSource');
+const timeEl=document.getElementById('syncDataTime');
+const localTime=appData._updatedAt||0;
+const labels={cloud:'☁️ 云端数据（已从 GitHub 同步）','local':'💻 本地数据（离线模式）','local-newer':'⚠️ 本地数据（有未上传的修改）','local-offline':'💻 本地数据（离线模式，云端不可用）','unknown':'❓ 未知来源'};
+if(el)el.textContent=labels[src]||labels['unknown'];
+if(timeEl&&localTime)timeEl.textContent='更新时间: '+new Date(localTime).toLocaleString();
+}
+
+// 检查云端数据与本地数据的差异
+async function verifySync(){
+const statusEl=document.getElementById('syncStatus');
+statusEl.innerHTML='🔍 正在检查云端数据...';
+try{
+const resp=await fetch(RAW_DATA_URL+'?t='+Date.now(),{cache:'no-store'});
+if(!resp.ok)throw new Error('HTTP '+resp.status);
+const cloudData=await resp.json();
+if(!cloudData.company||!cloudData.vehicles)throw new Error('数据格式异常');
+const cloudTime=cloudData._updatedAt||0;
+const localTime=appData._updatedAt||0;
+const cloudCount=cloudData.vehicles.length;
+const localCount=appData.vehicles.length;
+
+let msg='';
+if(cloudTime===localTime)msg='✅ 云端与本地一致（'+cloudCount+'辆车）';
+else if(cloudTime>localTime)msg='📥 云端更新（'+cloudCount+'辆车），本地落后 — 请点击"从云端下载"';
+else msg='📤 本地更新（'+localCount+'辆车），云端落后 — 请点击"上传到云端"';
+statusEl.innerHTML=msg;
+statusEl.style.color=(cloudTime===localTime)?'#2ecc71':(cloudTime>localTime?'#3498db':'#e74c3c');
+showToast(cloudTime===localTime?'✅ 云端与本地数据一致':(cloudTime>localTime?'⚠️ 云端有更新的数据，请下载':'⚠️ 本地有未上传的修改'));
+}catch(e){
+statusEl.innerHTML='❌ 检查失败: '+e.message;
+statusEl.style.color='#e74c3c';
+showToast('❌ 无法连接云端',true);
+}
 }
 
 // Upload data to GitHub via API
@@ -836,7 +889,7 @@ if(!token){const cfg=getSyncConfig();token=cfg.token||''}
 if(!token){if(!silent)showToast('❌ 请填写 GitHub Token',true);return}
 const cfg=getSyncConfig();cfg.token=token;saveSyncConfig(cfg);
 const owner='x20260519867-netizen',repo='shunying-trailer',path='data.json',branch='master';
-if(!silent)showToast('⏳ 正在同步到云端...');
+if(!silent)showToast('⏳ 正在上传数据到云端...');
 try{
 // Get SHA of existing file
 let sha='';
@@ -844,39 +897,48 @@ const getResp=await fetch(`https://api.github.com/repos/${owner}/${repo}/content
 if(getResp.ok){const info=await getResp.json();sha=info.sha}
 else if(getResp.status!==404){const e=await getResp.json();throw new Error(e.message||'获取文件信息失败')}
 // Prepare commit body (strip base64 images — they stay local only)
-appData._updatedAt=Date.now();
+const now=Date.now();
+appData._updatedAt=now;
 const uploadData=stripBase64ForSync(appData);
 const content=base64Encode(JSON.stringify(uploadData,null,2));
 const body={message:'🔄 数据同步 '+new Date().toISOString().slice(0,19).replace('T',' '),content:content,branch:branch};
 if(sha)body.sha=sha;
 const putResp=await fetch(`https://api.github.com/repos/${owner}/${repo}/contents/${path}`,{method:'PUT',headers:{'Authorization':'token '+token,'Content-Type':'application/json'},body:JSON.stringify(body)});
 if(!putResp.ok){const e=await putResp.json();throw new Error(e.message||'上传失败')}
+// 本地也保存一份，记录上传时间戳
+saveData(appData);
 cfg.lastSync=new Date().toISOString();saveSyncConfig(cfg);
 loadSyncSettings();
-if(!silent)showToast('✅ 数据已上传！1-2 分钟后其他设备刷新即可看到');
+if(!silent)showToast('✅ 已上传！其他设备进入管理后台点击"从云端下载"即可同步');
 return true;
 }catch(e){if(!silent)showToast('❌ 同步失败: '+e.message,true);return false}
 }
 
-// Download data from cloud (data.json via raw URL)
+// Download data from cloud via GitHub Raw URL (绕过CDN，直读仓库最新数据)
 async function syncFromCloud(){
-showToast('⏳ 正在从云端下载...');
+showToast('⏳ 正在从云端下载最新数据...');
 try{
-const resp=await fetch('./data.json?t='+Date.now());
-if(!resp.ok)throw new Error('HTTP '+resp.status);
+// 使用 raw.githubusercontent.com 直接读取，确保拿到最新版本
+const resp=await fetch(RAW_DATA_URL+'?t='+Date.now(),{cache:'no-store'});
+if(!resp.ok)throw new Error('HTTP '+resp.status+' — 请确认网络连接');
 const data=await resp.json();
 if(!data.company||!data.vehicles)throw new Error('数据格式不正确');
+const cloudTime=data._updatedAt||0;
+let localTime=0;
+try{const ls=localStorage.getItem(STORAGE_KEY);if(ls){const ld=JSON.parse(ls);localTime=ld._updatedAt||0}}catch(e){}
 appData=deepMerge(clone(DEFAULT_DATA),data);
-// Merge back local base64 images
+// 合并本地 base64 图片（云端不存大体积 base64）
 try{
 const ll=localStorage.getItem(STORAGE_KEY);
 if(ll){const ld=JSON.parse(ll);
-if(ld.vehicles){ld.vehicles.forEach(lv=>{const cv=appData.vehicles.find(v=>v.id===lv.id);if(cv&&lv.images){lv.images.filter(u=>u.startsWith('data:')).forEach(b=>{if(!cv.images.includes(b))cv.images.push(b)})}})}
+if(ld.vehicles){ld.vehicles.forEach(function(lv){var cv=appData.vehicles.find(function(v){return v.id===lv.id});if(cv&&lv.images){lv.images.filter(function(u){return u.startsWith('data:')}).forEach(function(b){if(!cv.images.includes(b))cv.images.push(b)})}})}
 if(ld.qrImage&&ld.qrImage.startsWith('data:')&&!appData.qrImage)appData.qrImage=ld.qrImage;
 }
 }catch(e2){}
+appData._updatedAt=cloudTime;
 saveData(appData);renderAll();
-showToast('✅ 已从云端同步数据');
+if(cloudTime>localTime||!localTime){showToast('✅ 已从云端同步数据 ('+new Date(cloudTime).toLocaleString()+')')}
+else{showToast('✅ 数据已是最新')}
 }catch(e){showToast('❌ 下载失败: '+e.message,true)}
 }
 
@@ -913,46 +975,56 @@ input.click();
 }
 
 // Try to load data from cloud on page load (fallback to localStorage)
+// 使用 GitHub Raw URL 直读仓库文件，绕过 GitHub Pages CDN 缓存
 async function loadDataWithCloud(){
 const loading=document.getElementById('loading');
 if(loading)loading.style.display='block';
 let loaded=false;
+let dataSource='local';
 const controller=new AbortController();
 const timeoutId=setTimeout(()=>controller.abort(),15000);
 try{
-const resp=await fetch('./data.json?t='+Date.now(),{signal:controller.signal});
+// 直接用 raw.githubusercontent.com 读取，保证拿到最新数据
+const resp=await fetch(RAW_DATA_URL+'?t='+Date.now(),{signal:controller.signal,cache:'no-store'});
 clearTimeout(timeoutId);
 if(resp.ok){
 const cloudData=await resp.json();
 if(cloudData.company&&cloudData.vehicles){
-appData=deepMerge(clone(DEFAULT_DATA),cloudData);
-// Check if localStorage has newer unsaved edits — if so, prefer local
-try{
-const localStr=localStorage.getItem(STORAGE_KEY);
-if(localStr){
-const localData=JSON.parse(localStr);
-const localTime=localData._updatedAt||0;
 const cloudTime=cloudData._updatedAt||0;
-if(localTime>cloudTime){
-appData=deepMerge(clone(DEFAULT_DATA),localData);
-}else{
-// Cloud loaded — merge back base64 images from local (they're stripped from cloud)
+let localTime=0;
+try{const ls=localStorage.getItem(STORAGE_KEY);if(ls){const ld=JSON.parse(ls);localTime=ld._updatedAt||0}}catch(e){}
+// 云端数据更新 → 使用云端；本地有未同步编辑 → 提示用户
+if(cloudTime>=localTime||!localTime){
+// 云端更新或首次使用，用云端数据
+appData=deepMerge(clone(DEFAULT_DATA),cloudData);
+dataSource='cloud';
+// 合并本地 base64 图片（云端不存大体积 base64）
 try{
 const ll=localStorage.getItem(STORAGE_KEY);
 if(ll){const ld=JSON.parse(ll);
-if(ld.vehicles){ld.vehicles.forEach(lv=>{const cv=appData.vehicles.find(v=>v.id===lv.id);if(cv&&lv.images){lv.images.filter(u=>u.startsWith('data:')).forEach(b=>{if(!cv.images.includes(b))cv.images.push(b)})}})}
+if(ld.vehicles){ld.vehicles.forEach(function(lv){var cv=appData.vehicles.find(function(v){return v.id===lv.id});if(cv&&lv.images){lv.images.filter(function(u){return u.startsWith('data:')}).forEach(function(b){if(!cv.images.includes(b))cv.images.push(b)})}})}
 if(ld.qrImage&&ld.qrImage.startsWith('data:')&&!appData.qrImage)appData.qrImage=ld.qrImage;
 }
 }catch(e2){}
+// 保存云端数据到本地作为离线备份，保留云端时间戳
+appData._updatedAt=cloudTime;
+}else{
+// 本地有更新的编辑（未同步到云端），保留本地数据
+appData=deepMerge(clone(DEFAULT_DATA),JSON.parse(localStorage.getItem(STORAGE_KEY)));
+dataSource='local-newer';
 }
-}
-}catch(e){}
 saveData(appData);loaded=true;
 }
 }
-}catch(e){clearTimeout(timeoutId);/* cloud unavailable, fall through */}
-if(!loaded){appData=loadData()}
+}catch(e){clearTimeout(timeoutId);/* 云端不可用，降级到本地 */}
+if(!loaded){appData=loadData();dataSource='local-offline'}
 if(loading)loading.style.display='none';
+// 存储数据来源供调试
+try{sessionStorage.setItem('shunying_data_source',dataSource)}catch(e){}
+// 如果本地有未同步编辑，显示提醒
+if(dataSource==='local-newer'){
+setTimeout(function(){showToast('⚠️ 检测到本地有未同步的数据，请进入管理后台同步到云端')},1500);
+}
 renderAll();
 }
 
