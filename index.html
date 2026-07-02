@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>顺盈汽贸 - 二手挂车交易平台</title>
 <meta name="description" content="顺盈汽贸 - 专注二手挂车交易，优质车源，价格透明，支持现场看车。可选中文、English、العربية、فارسی、Türkçe、کوردی、اردو">
 <meta property="og:title" content="顺盈汽贸 - 二手挂车交易平台">
@@ -615,6 +618,28 @@ footer a:hover{color:var(--yel)}
 <div class="toast" id="toast"></div>
 
 <script>
+// ===== 自动版本检测（页面代码更新时自动刷新，客户无需手动清缓存）=====
+var PAGE_VERSION=4;
+var VERSION_URL='https://raw.githubusercontent.com/x20260519867-netizen/shunying-trailer/master/version.json';
+(function(){
+try{
+var xhr=new XMLHttpRequest();
+xhr.open('GET',VERSION_URL+'?t='+Date.now(),true);
+xhr.timeout=5000;
+xhr.onload=function(){
+try{
+var v=JSON.parse(xhr.responseText);
+if(v.version&&v.version>PAGE_VERSION){
+console.log('🔁 检测到新版本 v'+v.version+' (当前 v'+PAGE_VERSION+')，自动刷新...');
+location.reload(true);
+}
+}catch(e){}
+};
+xhr.onerror=function(){};
+xhr.send();
+}catch(e){}
+})();
+
 // ===== i18n DATA =====
 const LANGUAGES = [
 {code:'zh-CN',native:'中文',name:'Chinese',dir:'ltr'},
