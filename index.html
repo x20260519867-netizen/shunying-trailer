@@ -540,6 +540,15 @@ footer a:hover{color:var(--yel)}
 <div style="font-size:11px;color:#999;margin-top:4px" id="syncDataTime"></div>
 </div>
 
+<!-- 自动同步开关 -->
+<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+<div>
+<div style="font-size:13px;font-weight:600;color:#166534;margin-bottom:2px">🔄 自动同步</div>
+<div style="font-size:11px;color:#555" id="autoSyncStatus">自动同步中 — 每30秒检查云端更新</div>
+</div>
+<button id="autoSyncToggle" onclick="toggleAutoSync()" style="padding:8px 18px;border:2px solid #22c55e;background:#fff;color:#22c55e;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .2s">🟢 已开启</button>
+</div>
+
 <div style="background:#f8f9fa;border-radius:8px;padding:16px;margin-bottom:16px">
 <label style="font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:4px">GitHub Token（个人访问令牌）</label>
 <input type="password" id="syncTokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:6px;font-size:14px;outline:none;font-family:monospace">
@@ -888,6 +897,12 @@ function handleSubmit(e){e.preventDefault();const btn=e.target.querySelector('.s
 // ===== CLOUD SYNC =====
 const SYNC_CONFIG_KEY='shunying_sync_config';
 const RAW_DATA_URL='https://raw.githubusercontent.com/x20260519867-netizen/shunying-trailer/master/data.json';
+const AUTO_SYNC_KEY='shunying_auto_sync';
+const AUTO_SYNC_INTERVAL=30000; // 30秒检查一次云端更新
+let autoSyncTimer=null;
+let autoSyncEnabled=true;
+function getAutoSyncConfig(){try{var c=JSON.parse(localStorage.getItem(AUTO_SYNC_KEY));if(c===null){return{enabled:true}}return c}catch(e){return{enabled:true}}}
+function saveAutoSyncConfig(c){localStorage.setItem(AUTO_SYNC_KEY,JSON.stringify(c))}
 function getSyncConfig(){try{return JSON.parse(localStorage.getItem(SYNC_CONFIG_KEY))||{}}catch(e){return{}}}
 function saveSyncConfig(c){localStorage.setItem(SYNC_CONFIG_KEY,JSON.stringify(c))}
 function base64Encode(str){const bytes=new TextEncoder().encode(str);let bin='';for(let i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);return btoa(bin)}
@@ -947,6 +962,88 @@ statusEl.innerHTML='❌ 检查失败: '+e.message;
 statusEl.style.color='#e74c3c';
 showToast('❌ 无法连接云端',true);
 }
+}
+
+// ===== 自动同步 =====
+// 定时检查云端是否有更新，有则自动拉取
+async function checkCloudForUpdates(){
+if(!autoSyncEnabled)return;
+// 如果用户正在编辑，跳过自动同步
+if(document.getElementById('adminPanelModal').classList.contains('active'))return;
+if(document.getElementById('vehicleEditModal').classList.contains('active'))return;
+try{
+const resp=await fetch(RAW_DATA_URL+'?t='+Date.now(),{cache:'no-store'});
+if(!resp.ok)return;
+const cloudData=await resp.json();
+if(!cloudData.company||!cloudData.vehicles)return;
+const cloudTime=cloudData._updatedAt||0;
+const localTime=appData._updatedAt||0;
+if(cloudTime>localTime){
+// 云端更新，自动拉取
+const oldCount=appData.vehicles.length;
+appData=deepMerge(clone(DEFAULT_DATA),cloudData);
+// 合并本地 base64 图片
+try{
+const ll=localStorage.getItem(STORAGE_KEY);
+if(ll){const ld=JSON.parse(ll);
+if(ld.vehicles){ld.vehicles.forEach(function(lv){var cv=appData.vehicles.find(function(v){return v.id===lv.id});if(cv&&lv.images){lv.images.filter(function(u){return u.startsWith('data:')}).forEach(function(b){if(!cv.images.includes(b))cv.images.push(b)})}})}
+if(ld.qrImage&&ld.qrImage.startsWith('data:')&&!appData.qrImage)appData.qrImage=ld.qrImage;
+}
+}catch(e){}
+appData._updatedAt=cloudTime;
+saveData(appData);renderAll();
+try{sessionStorage.setItem('shunying_data_source','cloud')}catch(e){}
+console.log('🔄 自动同步: 云端',cloudData.vehicles.length,'辆车 (本地原有',oldCount,'辆)');
+}
+}catch(e){/* 静默失败，下次再试 */}
+}
+
+// 自动上传：保存数据后自动推送到云端
+async function autoUploadToCloud(){
+const cfg=getSyncConfig();
+if(!cfg.token)return false;
+try{
+return await syncToCloud(true);
+}catch(e){return false}
+}
+
+// 启动自动同步轮询
+function startAutoSync(){
+const cfg=getAutoSyncConfig();
+autoSyncEnabled=cfg.enabled!==false;
+if(autoSyncTimer)clearInterval(autoSyncTimer);
+if(autoSyncEnabled){
+// 首次延迟5秒后检查，之后每30秒检查
+autoSyncTimer=setInterval(checkCloudForUpdates,AUTO_SYNC_INTERVAL);
+// 页面加载后延迟检查一次
+setTimeout(checkCloudForUpdates,5000);
+console.log('🔄 自动同步已启动 (间隔'+AUTO_SYNC_INTERVAL/1000+'秒)');
+}
+}
+
+// 停止自动同步
+function stopAutoSync(){
+if(autoSyncTimer){clearInterval(autoSyncTimer);autoSyncTimer=null}
+autoSyncEnabled=false;
+const cfg=getAutoSyncConfig();cfg.enabled=false;saveAutoSyncConfig(cfg);
+updateAutoSyncUI();
+}
+
+// 切换自动同步开关
+function toggleAutoSync(){
+autoSyncEnabled=!autoSyncEnabled;
+const cfg=getAutoSyncConfig();cfg.enabled=autoSyncEnabled;saveAutoSyncConfig(cfg);
+if(autoSyncEnabled){startAutoSync();showToast('✅ 自动同步已开启 — 设备间修改将自动同步')}
+else{stopAutoSync();showToast('⏸️ 自动同步已关闭')}
+updateAutoSyncUI();
+}
+
+// 更新自动同步UI状态
+function updateAutoSyncUI(){
+const toggle=document.getElementById('autoSyncToggle');
+const status=document.getElementById('autoSyncStatus');
+if(toggle)toggle.textContent=autoSyncEnabled?'🟢 已开启':'⚪ 已关闭';
+if(status)status.textContent=autoSyncEnabled?'自动同步中 — 每30秒检查云端更新':'自动同步已关闭 — 需手动同步';
 }
 
 // Upload data to GitHub via API
@@ -1014,7 +1111,7 @@ function tryAutoSync(){
 const cfg=getSyncConfig();
 if(!cfg.token)return;
 syncToCloud(true).then(function(ok){
-if(ok)showToast('✅ 已保存并同步到云端');
+if(ok){showToast('✅ 已保存并同步到云端');try{sessionStorage.setItem('shunying_data_source','cloud')}catch(e){}}
 else showToast('⚠️ 已保存，但同步失败',true);
 }).catch(function(){});
 }
@@ -1093,6 +1190,8 @@ if(dataSource==='local-newer'){
 setTimeout(function(){showToast('⚠️ 检测到本地有未同步的数据，请进入管理后台同步到云端')},1500);
 }
 renderAll();
+// 启动自动同步轮询
+startAutoSync();
 }
 
 // ===== ADMIN =====
@@ -1122,7 +1221,7 @@ document.getElementById('editHeroTitle').value=c.heroTitle.replace(/<[^>]*>/g,''
 document.getElementById('editPhone').value=c.phone;document.getElementById('editWechat').value=c.wechat;
 document.getElementById('editWhatsapp').value=c.whatsapp;document.getElementById('editWhatsappDisplay').value=c.whatsappDisplay;
 document.getElementById('editAddress').value=c.address;
-updateQrPreview();renderVehicleList();switchAdminTab('tabCompany');applyAdminLang();loadSyncSettings();
+updateQrPreview();renderVehicleList();switchAdminTab('tabCompany');applyAdminLang();loadSyncSettings();updateAutoSyncUI();
 document.getElementById('adminPanelModal').classList.add('active');document.body.style.overflow='hidden';
 }
 function hideAdminPanel(){document.getElementById('adminPanelModal').classList.remove('active');document.body.style.overflow='';document.body.classList.remove('admin-mode')}
@@ -1243,11 +1342,13 @@ tryAutoSync();
 function deleteVehicle(id){
 if(!confirm('确定删除？'))return;
 appData.vehicles=appData.vehicles.filter(v=>v.id!==id);
+appData._updatedAt=Date.now();
 saveData(appData);
 renderVehicleList();
 renderCards(appData.vehicles);
 document.getElementById('statVehicles').textContent=appData.vehicles.length+'+';
 showToast(getText('admin.veDeleted'));
+tryAutoSync();
 }
 
 // ===== ADMIN SAVE =====
@@ -1269,9 +1370,8 @@ renderAll();
 hideAdminPanel();
 showToast(getText('admin.saved'));
 document.body.classList.remove('admin-mode');
-// Auto sync to cloud if configured
-const _cfg=getSyncConfig();
-if(_cfg.token){showToast('☁️ 正在同步到云端...');tryAutoSync();}
+// 自动上传到云端
+tryAutoSync();
 }
 
 // ===== TOAST =====
